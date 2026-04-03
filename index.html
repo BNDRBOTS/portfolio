@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- [AUDIT FIX] Added maximum-scale and viewport-fit to ensure stable safe-area behaviors and prevent input zoom jank on mobile -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>BNDR — Work</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,6 +32,9 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* [AUDIT FIX] Eradicate default mobile tap highlights globally for a native app feel */
+  * { -webkit-tap-highlight-color: transparent; }
+
   html {
     background: var(--bg);
     color: var(--ink);
@@ -44,6 +48,12 @@
   body {
     min-height: 100dvh;
     overflow-x: hidden;
+  }
+  
+  /* [AUDIT FIX] Robust body scroll lock class for mobile modal state */
+  body.modal-open {
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
   /* ── NOISE OVERLAY ── */
@@ -152,7 +162,6 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* REPAIRED SPACING: Tighter top gap, auto height instead of massive 100dvh voids */
     padding: clamp(120px, 15vw, 160px) clamp(16px, 4vw, 48px) clamp(40px, 6vw, 80px);
     overflow: hidden;
   }
@@ -287,18 +296,15 @@
     animation: fade-up var(--t-slow) var(--ease-out) 0.7s forwards;
     cursor: pointer;
     transition: color var(--t-fast);
+    /* [AUDIT FIX] Enforce instantaneous interaction layer for specific touch targets */
+    touch-action: manipulation;
   }
-  .hero-scroll:hover { color: var(--ink-dim); }
   .scroll-arrow {
     width: 32px; height: 32px;
     border: 1px solid var(--ink-ghost);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     transition: border-color var(--t-fast), transform var(--t-mid) var(--ease-out);
-  }
-  .hero-scroll:hover .scroll-arrow {
-    border-color: var(--accent);
-    transform: translateY(4px);
   }
   .scroll-arrow svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 
@@ -334,18 +340,23 @@
     border: 1px solid var(--line);
     border-radius: 100px;
     cursor: pointer;
-    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
     white-space: nowrap;
     background: transparent;
     -webkit-appearance: none;
+    /* [AUDIT FIX] Instant tap registration */
+    touch-action: manipulation;
   }
-  .filter-pill:hover { color: var(--ink); border-color: rgba(255,255,255,0.2); }
+  
   .filter-pill.active {
     color: var(--bg);
     background: var(--accent);
     border-color: var(--accent);
     font-style: normal;
   }
+  
+  /* [AUDIT FIX] Mobile interaction states */
+  .filter-pill:active { transform: scale(0.96); }
 
   /* ── GRID SECTION ── */
   .grid-section {
@@ -380,15 +391,6 @@
     gap: var(--gap);
   }
 
-  @media (max-width: 600px) {
-    :root { --card-w: 100%; --card-h: 220px; }
-    .cards-grid { grid-template-columns: 1fr; }
-  }
-  @media (min-width: 601px) and (max-width: 900px) {
-    :root { --card-w: 46%; --card-h: 200px; }
-    .cards-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
   /* ── CARD ── */
   .card {
     position: relative;
@@ -402,12 +404,6 @@
     transition: transform var(--t-mid) var(--ease-out), border-color var(--t-mid), box-shadow var(--t-mid);
     opacity: 0;
     animation: card-in var(--t-slow) var(--ease-out) forwards;
-  }
-  
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(200,245,100,0.2);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,245,100,0.08) inset;
   }
 
   @keyframes card-in {
@@ -471,7 +467,6 @@
     transition: opacity var(--t-mid) var(--ease-out);
     pointer-events: none; /* Let clicks pass through to iframe */
   }
-  .card:hover .card-overlay { opacity: 1; }
 
   .card-overlay-inner {
     display: flex;
@@ -498,14 +493,12 @@
     flex-shrink: 0;
     cursor: pointer;
     pointer-events: auto; /* Catch clicks for modal */
+    touch-action: manipulation;
   }
-  .card-open-btn svg { width: 11px; height: 11px; fill: none; stroke: white; stroke-width: 1.8; }
-  .card-open-btn:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    transform: rotate(45deg) scale(1.1);
-  }
-  .card-open-btn:hover svg { stroke: var(--bg); }
+  .card-open-btn svg { width: 11px; height: 11px; fill: none; stroke: white; stroke-width: 1.8; transition: stroke var(--t-fast); }
+  
+  /* [AUDIT FIX] Mobile interaction states */
+  .card-open-btn:active { transform: scale(0.92); }
 
   /* Live badge */
   .live-badge {
@@ -543,8 +536,8 @@
     cursor: pointer; /* Click footer to open modal */
     background: var(--surface);
     transition: background var(--t-fast);
+    touch-action: manipulation;
   }
-  .card-footer:hover { background: rgba(255,255,255,0.03); }
   
   .card-name {
     font-family: var(--font-body);
@@ -620,8 +613,9 @@
     display: flex; align-items: center; justify-content: center;
     z-index: 10;
     transition: background var(--t-fast), transform var(--t-fast);
+    touch-action: manipulation;
   }
-  .modal-close:hover { background: var(--accent); transform: rotate(90deg); }
+  .modal-close:active { transform: scale(0.9); }
 
   .modal-bar {
     position: absolute;
@@ -650,8 +644,8 @@
     text-decoration: none;
     display: flex; align-items: center; gap: 6px;
     transition: color var(--t-fast);
+    touch-action: manipulation;
   }
-  .modal-link:hover { color: var(--ink); }
   .modal-link svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2; }
 
   /* ── FOOTER ── */
@@ -727,19 +721,116 @@
     to { transform: scale(1); opacity: 0; }
   }
 
-  /* ── MOBILE ENHANCEMENTS ── */
+  /* * ==========================================
+   * [AUDIT FIX] SAFELY SCOPED DESKTOP HOVERS
+   * Removes sticky hover regression on mobile touch devices
+   * ==========================================
+   */
+  @media (hover: hover) and (pointer: fine) {
+    .hero-scroll:hover { color: var(--ink-dim); }
+    .hero-scroll:hover .scroll-arrow { border-color: var(--accent); transform: translateY(4px); }
+    
+    .filter-pill:hover { color: var(--ink); border-color: rgba(255,255,255,0.2); }
+    
+    .card:hover { 
+      transform: translateY(-4px); 
+      border-color: rgba(200,245,100,0.2); 
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,245,100,0.08) inset; 
+    }
+    .card:hover .card-overlay { opacity: 1; }
+    
+    .card-open-btn:hover { background: var(--accent); border-color: var(--accent); transform: rotate(45deg) scale(1.1); }
+    .card-open-btn:hover svg { stroke: var(--bg); }
+    
+    .card-footer:hover { background: rgba(255,255,255,0.03); }
+    
+    .modal-close:hover { background: var(--accent); transform: rotate(90deg); }
+    .modal-link:hover { color: var(--ink); }
+    
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  }
+
+  /* * ==========================================
+   * [AUDIT FIX] HIGH-PRECISION MOBILE UX LAYER
+   * Enforcing HIG touch targets, native scrolling, and precise scaling
+   * ==========================================
+   */
   @media (max-width: 600px) {
+    :root { 
+      --card-w: 100%; 
+      --card-h: 280px; /* Enhanced height for native 1:1 mobile render ratio */
+    }
+    .cards-grid { grid-template-columns: 1fr; }
+    
     header { padding: 14px 16px; }
     .hero { padding: 100px 16px 40px; }
     .grid-section { padding: 24px 16px; }
-    .filter-bar { padding: 14px 16px; }
+    
+    /* Touch Target Sizing (min 44px equivalent) */
+    .filter-pill { padding: 10px 20px; font-size: 0.9rem; }
+    .card-footer { padding: 16px; min-height: 56px; } 
+    
+    /* Native Scroll Spacer Injection - Prevents last item from snapping hard to the edge */
+    .filter-bar { padding: 14px 0 14px 16px; }
+    .filter-bar::after { content: ''; flex: 0 0 16px; }
+
+    /* Iframe Render Accuracy: Un-scale the iframe so child sites evaluate true mobile breakpoints */
+    .card-preview iframe {
+      width: 100%; 
+      height: 100%;
+      transform: none; 
+    }
+
+    /* Interaction Discovery: Guarantee overlay actions are visible without hover state */
+    .card-overlay { 
+      opacity: 1; 
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);
+      padding: 12px;
+    }
+    
+    /* Thumb-zone optimized action button */
+    .card-open-btn {
+      width: 44px; 
+      height: 44px;
+      background: rgba(8,8,8,0.7);
+      backdrop-filter: blur(4px);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .card-open-btn svg { width: 14px; height: 14px; }
+
+    /* Modal Mobile Geometry: Reposition close button to avoid viewport clipping, adjust bounds */
+    .modal-overlay { 
+      padding: 16px; 
+      align-items: center; 
+    }
+    .modal-frame { 
+      height: calc(100dvh - 32px);
+      aspect-ratio: auto; 
+      transform: scale(0.96) translateY(0);
+    }
+    .modal-overlay.open .modal-frame {
+      transform: scale(1) translateY(0);
+    }
+    .modal-close {
+      top: 12px; 
+      right: 12px;
+      width: 44px; 
+      height: 44px;
+      background: rgba(8,8,8,0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+  }
+
+  @media (min-width: 601px) and (max-width: 900px) {
+    :root { --card-w: 46%; --card-h: 200px; }
+    .cards-grid { grid-template-columns: repeat(2, 1fr); }
   }
 
   ::selection { background: var(--accent); color: var(--bg); }
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
@@ -827,7 +918,7 @@
 (function() {
   'use strict';
 
-  // ── DATA (Requested Items Excluded) ──
+  // ── DATA ──
   const PROJECTS = [
     { url: 'https://bndrbots.github.io/resourcecite/#home',       name: 'Resource Cite',         tag: 'tool',      label: 'Tool' },
     { url: 'https://bndrbots.github.io/crystal_love/',            name: 'Crystal Love',          tag: 'creative',  label: 'Creative' },
@@ -897,8 +988,6 @@
       card.setAttribute('role', 'listitem');
       card.style.animationDelay = (0.04 + i * 0.035) + 's';
 
-      // Because the iframe is strictly live, opening the modal is now handled 
-      // explicitly by clicking either the card's bottom footer or the arrow button.
       card.innerHTML = `
         <div class="card-preview" aria-label="${p.name} live preview">
           <div class="shimmer" aria-hidden="true"></div>
@@ -938,6 +1027,7 @@
 
   function setupLazyIframes() {
     const previews = grid.querySelectorAll('.card-preview');
+    // [AUDIT FIX] Expanded rootMargin horizontally for smoother dynamic load during fast scroll 
     const io = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -949,7 +1039,6 @@
             iframe.src = url;
             iframe.title = card ? card.dataset.name : 'Preview';
             iframe.setAttribute('loading', 'lazy');
-            // Sandbox removed to allow completely live, unrestricted functionality
             iframe.onload = () => {
               const shimmer = preview.querySelector('.shimmer');
               if (shimmer) shimmer.classList.add('loaded');
@@ -959,7 +1048,7 @@
           }
         }
       });
-    }, { rootMargin: '200px 0px' });
+    }, { rootMargin: '300px 0px' });
 
     previews.forEach(p => io.observe(p));
   }
@@ -979,14 +1068,16 @@
     });
     overlay.classList.add('open');
     modalOpen = true;
-    document.body.style.overflow = 'hidden';
+    
+    // [AUDIT FIX] Applying scoped class for guaranteed cross-device body scroll lock
+    document.body.classList.add('modal-open');
     modalClose.focus();
   }
 
   function closeModal() {
     overlay.classList.remove('open');
     modalOpen = false;
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
     setTimeout(() => { modalIframe.src = ''; }, 400);
   }
 
