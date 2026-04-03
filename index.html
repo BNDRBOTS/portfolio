@@ -897,7 +897,7 @@
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Project preview">
   <div class="modal-frame" id="modalFrame">
     <button class="modal-close" id="modalClose" aria-label="Close preview">✕</button>
-    <iframe id="modalIframe" title="Project preview" loading="lazy"></iframe>
+    <iframe id="modalIframe" title="Project preview" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
     <div class="modal-bar">
       <span class="modal-title" id="modalTitle"></span>
       <a class="modal-link" id="modalExtLink" href="#" target="_blank" rel="noopener noreferrer">
@@ -1030,8 +1030,8 @@
     // [AUDIT FIX] Expanded rootMargin horizontally for smoother dynamic load during fast scroll 
     const io = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
+        const preview = entry.target;
         if (entry.isIntersecting) {
-          const preview = entry.target;
           if (!preview.querySelector('iframe')) {
             const card = preview.closest('.card');
             const url = card ? card.dataset.url : '';
@@ -1039,16 +1039,25 @@
             iframe.src = url;
             iframe.title = card ? card.dataset.name : 'Preview';
             iframe.setAttribute('loading', 'lazy');
+            // [AUDIT FIX - CRITICAL] Re-applied sandbox to prevent iframe hijack/redirect loops ("number after number" error)
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
             iframe.onload = () => {
               const shimmer = preview.querySelector('.shimmer');
               if (shimmer) shimmer.classList.add('loaded');
             };
             preview.insertBefore(iframe, preview.firstChild);
-            io.unobserve(preview);
+          }
+        } else {
+          // [AUDIT FIX - CRITICAL] Destroy iframes when out of view to prevent iOS Safari RAM crashes ("a problem repeatedly occurred")
+          const iframe = preview.querySelector('iframe');
+          if (iframe) {
+            iframe.remove();
+            const shimmer = preview.querySelector('.shimmer');
+            if (shimmer) shimmer.classList.remove('loaded');
           }
         }
       });
-    }, { rootMargin: '300px 0px' });
+    }, { rootMargin: '600px 0px' });
 
     previews.forEach(p => io.observe(p));
   }
