@@ -1,1160 +1,1156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<!-- [AUDIT FIX] Added maximum-scale and viewport-fit to ensure stable safe-area behaviors and prevent input zoom jank on mobile -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>BNDR — Work</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #080808;
-    --surface: #111111;
-    --surface2: #181818;
-    --line: rgba(255,255,255,0.07);
-    --ink: #f0ede8;
-    --ink-dim: rgba(240,237,232,0.4);
-    --ink-ghost: rgba(240,237,232,0.12);
-    --accent: #c8f564;
-    --r: 6px;
-    --card-w: clamp(260px, 38vw, 420px);
-    --card-h: clamp(180px, 26vw, 290px);
-    --gap: clamp(12px, 2vw, 24px);
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --t-fast: 180ms;
-    --t-mid: 380ms;
-    --t-slow: 700ms;
-    --font-display: 'Archivo Black', sans-serif;
-    --font-body: 'Cormorant Garamond', Georgia, serif;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BNDR.OS | Professional Command Center</title>
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <!-- Typography: Plus Jakarta Sans (Aeonik Proxy) & Archivo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  /* [AUDIT FIX] Eradicate default mobile tap highlights globally for a native app feel */
-  * { -webkit-tap-highlight-color: transparent; }
+    <style>
+        /* ==========================================================================
+           CORE TOKENS & SYSTEM (STRICT COLOR ADHERENCE & WCAG ALIGNMENT)
+           ========================================================================== */
+        :root {
+            /* Palette: Tan Bone & Medium Dark Charcoal */
+            --color-bone: #E3DFD5;
+            --color-bone-dark: #D8D3C8;
+            --color-charcoal: #2F2E2C; /* Updated to Medium Dark Charcoal */
+            
+            /* WCAG Contrast Mappings */
+            --text-on-bone: #111111;
+            --text-muted-on-bone: #555555;
+            
+            --text-on-charcoal: #E3DFD5;
+            --text-muted-on-charcoal: #999896;
 
-  html {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-  }
+            /* Mapped Structural Tokens */
+            --bg-base: var(--color-bone);
+            --bg-card: var(--color-charcoal);
+            
+            --border-base: rgba(0, 0, 0, 0.08);
+            --border-card: #42403E; /* Visible medium dark charcoal frame */
+            --border-hover: rgba(255, 255, 255, 0.3);
+            
+            /* Specific Accents */
+            --color-magenta: #ff0055;
+            --color-plasma: #CCFF00;
+            --dot-glow: var(--color-plasma); /* Functional success indicator synced to brand green */
+            --check-glow: var(--color-bone);
+            --canvas-inner: var(--color-bone-dark); 
+            
+            /* Nav Pill Specific Tokens */
+            --radius-pill: 99px;
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 
-  body {
-    min-height: 100dvh;
-    overflow-x: hidden;
-  }
-  
-  /* [AUDIT FIX] Robust body scroll lock class for mobile modal state */
-  body.modal-open {
-    overflow: hidden;
-    overscroll-behavior: none;
-  }
+            /* Footer Specific Ported Tokens */
+            --void: #020202;
+            --bone: #E8E4DF;
+            --plasma: #CCFF00;
+            --c-li: #0077b5; --c-ss: #ff6719; --c-gh: #ffffff; --c-ig: #e4405f;
+            --c-fb: #1877f2; --c-bc: #FFDD00; --c-gr: #ff0055; --c-pb: #3b82f6;
+            --f-h: 56px; 
+            --f-ease: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.032;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 160px 160px;
-  }
+            /* Typography Logic */
+            --font-aeonik: 'Plus Jakarta Sans', sans-serif;
+            --font-label: 'Archivo', sans-serif;
+            --font-mono: 'IBM Plex Mono', monospace;
 
-  /* ── SCANLINES ── */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.018) 2px,
-      rgba(0,0,0,0.018) 4px
-    );
-  }
+            /* Spacing (8px baseline) */
+            --space-2: 0.5rem;
+            --space-4: 1rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
 
-  /* ── CURSOR ── */
-  .cursor {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: opacity 0.2s, width 0.2s var(--ease-out), height 0.2s var(--ease-out), background 0.2s;
-    mix-blend-mode: difference;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 36px;
-    height: 36px;
-    border: 1px solid rgba(200, 245, 100, 0.4);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%,-50%);
-    transition: width 0.3s var(--ease-out), height 0.3s var(--ease-out), opacity 0.2s, border-color 0.2s;
-  }
-  .cursor.active { width: 16px; height: 16px; }
-  .cursor-ring.active { width: 56px; height: 56px; border-color: rgba(200,245,100,0.15); }
+            /* Grid Configuration */
+            --grid-gap: 24px;
+            --card-min-width: 340px;
+        }
 
-  @media (hover: none) { .cursor, .cursor-ring { display: none; } }
+        /* ==========================================================================
+           BASE STYLES & ACCESSIBILITY RESETS
+           ========================================================================== */
+        *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
 
-  /* ── HEADER ── */
-  header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px clamp(16px, 4vw, 48px);
-    background: linear-gradient(to bottom, rgba(8,8,8,0.96) 0%, transparent 100%);
-    backdrop-filter: blur(0px);
-  }
+        html {
+            background-color: var(--bg-base);
+            color: var(--text-on-bone);
+            font-family: var(--font-aeonik);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
+        }
 
-  .logo {
-    font-family: var(--font-display);
-    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-    letter-spacing: 0.18em;
-    color: var(--ink);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .logo-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse-dot 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse-dot {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.6); opacity: 0.6; }
-  }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-  .header-count {
-    font-family: var(--font-body);
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    color: var(--ink-dim);
-    font-style: italic;
-  }
+        /* Standardized Focus Rings for Accessibility Compliance */
+        *:focus-visible {
+            outline: 2px solid var(--text-on-bone);
+            outline-offset: 2px;
+        }
 
-  /* ── HERO ── */
-  .hero {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: clamp(120px, 15vw, 160px) clamp(16px, 4vw, 48px) clamp(40px, 6vw, 80px);
-    overflow: hidden;
-  }
+        /* ==========================================================================
+           STATIC SPATIAL FX (ZERO LAG BACKGROUND)
+           ========================================================================== */
+        .spatial-background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: none;
+            pointer-events: none;
+        }
 
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-  }
-  .hero-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    will-change: transform;
-  }
-  .orb-1 {
-    width: 60vw; height: 60vw;
-    max-width: 600px; max-height: 600px;
-    top: -10%; right: -15%;
-    background: radial-gradient(circle, rgba(200,245,100,0.06) 0%, transparent 70%);
-    animation: orb-float-1 12s ease-in-out infinite;
-  }
-  .orb-2 {
-    width: 40vw; height: 40vw;
-    max-width: 360px; max-height: 360px;
-    bottom: 5%; left: -10%;
-    background: radial-gradient(circle, rgba(255,107,53,0.05) 0%, transparent 70%);
-    animation: orb-float-2 16s ease-in-out infinite;
-  }
-  .orb-3 {
-    width: 50vw; height: 50vw;
-    max-width: 500px; max-height: 500px;
-    top: 30%; left: 20%;
-    background: radial-gradient(circle, rgba(200,245,100,0.025) 0%, transparent 70%);
-    animation: orb-float-3 20s ease-in-out infinite;
-  }
+        /* ==========================================================================
+           GLOBAL HEADER (SLIM OS BAR)
+           ========================================================================== */
+        .global-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            /* rgba equivalent of #E3DFD5 at 90% opacity */
+            background: rgba(227, 223, 213, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-base);
+            padding: var(--space-2) var(--space-4);
+            display: flex;
+            align-items: center;
+        }
 
-  @keyframes orb-float-1 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    33% { transform: translate(-3%, 5%) scale(1.05); }
-    66% { transform: translate(3%, -3%) scale(0.97); }
-  }
-  @keyframes orb-float-2 {
-    0%,100% { transform: translate(0,0) scale(1); }
-    50% { transform: translate(5%, -8%) scale(1.08); }
-  }
-  @keyframes orb-float-3 {
-    0%,100% { transform: translate(0,0); }
-    40% { transform: translate(-4%, 4%); }
-    70% { transform: translate(4%, -2%); }
-  }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .brand-logo img {
+            height: 56px; /* Substantially increased from 36px for mobile */
+            width: auto;
+            display: block;
+            /* Filter to charcoal/black to contrast perfectly against the bone header */
+            filter: brightness(0);
+            transition: opacity 0.2s ease;
+        }
+        
+        .brand-logo:hover img {
+            opacity: 0.7;
+        }
 
-  .hero-grid-lines {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: clamp(40px, 6vw, 80px) clamp(40px, 6vw, 80px);
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,0,0,0.3) 0%, transparent 100%);
-  }
+        /* Desktop Breakpoint Alignment */
+        @media (min-width: 1024px) {
+            .global-header {
+                padding: var(--space-2) var(--space-8);
+            }
+            .brand-logo img {
+                height: 80px; /* Proportional scale-up on desktop */
+            }
+        }
 
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    max-width: 900px;
-  }
+        /* ==========================================================================
+           MAIN SITE NAV PILL OVERLAY
+           ========================================================================== */
+        .nav-pill {
+            position: fixed;
+            top: max(24px, env(safe-area-inset-top));
+            right: max(24px, env(safe-area-inset-right));
+            transform: translate3d(0, -20px, 0);
+            opacity: 0;
+            background: rgba(227, 223, 213, 0.95);
+            border: 1px solid var(--border-base);
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px;
+            z-index: 101; /* Renders above the global-header */
+            box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.5);
+            transition: transform 0.6s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo), border-radius 0.6s var(--ease-premium), width 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
+        }
+        .nav-pill::-webkit-scrollbar { display: none; }
+        .nav-pill.is-loaded { transform: translate3d(0, 0, 0); opacity: 1; }
+        .nav-pill.hidden { transform: translate3d(0, -120%, 0); opacity: 0; pointer-events: none; }
 
-  .hero-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-body);
-    font-style: italic;
-    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-    letter-spacing: 0.16em;
-    color: var(--accent);
-    margin-bottom: clamp(16px, 3vw, 28px);
-    opacity: 0;
-    transform: translateY(12px);
-    animation: fade-up var(--t-slow) var(--ease-out) 0.2s forwards;
-  }
-  .hero-label::before {
-    content: '';
-    width: 28px; height: 1px;
-    background: var(--accent);
-    opacity: 0.7;
-  }
+        .nav-pill a.route-btn {
+            color: var(--text-on-bone);
+            text-decoration: none;
+            font-size: 11px;
+            font-family: var(--font-aeonik);
+            font-weight: 700;
+            font-style: normal;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s var(--ease-out-expo);
+            position: relative;
+            min-height: 44px; /* Ensure mobile touch target */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-pill a.route-btn::after {
+            content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; z-index: -1;
+        }
+        .nav-pill a.route-btn:focus-visible, .nav-pill a.route-btn:active {
+            background: var(--color-plasma); color: var(--color-charcoal);
+            box-shadow: 0 0 20px rgba(204, 255, 0, 0.3); outline: none;
+        }
+        @media (hover: hover) {
+            .nav-pill a.route-btn:hover {
+                background: var(--color-plasma); color: var(--color-charcoal);
+                box-shadow: 0 0 20px rgba(204, 255, 0, 0.3); outline: none; transform: scale(1.02);
+            }
+        }
 
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 11vw, 10rem);
-    line-height: 0.88;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-    margin-bottom: clamp(16px, 3vw, 32px);
-    opacity: 0;
-    transform: translateY(24px);
-    animation: fade-up var(--t-slow) var(--ease-out) 0.35s forwards;
-  }
-  .hero-title em {
-    font-family: var(--font-body);
-    font-weight: 300;
-    font-style: italic;
-    color: var(--ink-dim);
-    font-size: 0.6em;
-    display: block;
-    line-height: 1.1;
-  }
+        /* Nav Desktop Navigation */
+        @media (min-width: 800px) {
+            .nav-pill {
+                max-width: calc(100vw - 48px);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-x: contain;
+                white-space: nowrap;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+                scroll-snap-type: x mandatory;
+                scroll-padding: 0 6px;
+                padding: 4px;
+            }
+            .nav-pill a.route-btn {
+                flex: 0 0 auto;
+                scroll-snap-align: start;
+                padding: 8px 20px;
+                min-height: unset;
+            }
+            #mobile-nav-toggle { display: none; }
+            .nav-items-wrapper { display: contents; }
+            .nav-items-inner { display: contents; }
+        }
 
-  .hero-sub {
-    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
-    color: var(--ink-dim);
-    max-width: 500px;
-    line-height: 1.7;
-    margin-bottom: clamp(28px, 5vw, 48px);
-    opacity: 0;
-    transform: translateY(16px);
-    animation: fade-up var(--t-slow) var(--ease-out) 0.5s forwards;
-  }
+        /* Nav Mobile Morphing Navigation */
+        @media (max-width: 799px) {
+            .nav-pill {
+                right: auto;
+                left: 50%;
+                transform: translate3d(-50%, -20px, 0);
+                flex-direction: column;
+                background: var(--color-bone);
+                min-width: 140px;
+                padding: 4px;
+                border-radius: 32px;
+                box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.2);
+                width: auto;
+                max-width: calc(100vw - 48px);
+            }
+            .nav-pill.is-loaded { transform: translate3d(-50%, 0, 0); opacity: 1; }
+            .nav-pill.hidden { transform: translate3d(-50%, -120%, 0); opacity: 0; }
+            
+            .nav-pill.is-open {
+                width: calc(100vw - 48px);
+                border-radius: 20px;
+                box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+            }
 
-  .hero-scroll {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-style: italic;
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    color: var(--ink-ghost);
-    opacity: 0;
-    animation: fade-up var(--t-slow) var(--ease-out) 0.7s forwards;
-    cursor: pointer;
-    transition: color var(--t-fast);
-    /* [AUDIT FIX] Enforce instantaneous interaction layer for specific touch targets */
-    touch-action: manipulation;
-  }
-  .scroll-arrow {
-    width: 32px; height: 32px;
-    border: 1px solid var(--ink-ghost);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    transition: border-color var(--t-fast), transform var(--t-mid) var(--ease-out);
-  }
-  .scroll-arrow svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+            #mobile-nav-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%), var(--color-bone);
+                color: var(--text-on-bone);
+                padding: 8px 24px;
+                border-radius: 32px;
+                font-family: var(--font-aeonik);
+                font-weight: 800;
+                font-size: 13px;
+                letter-spacing: 0.15em;
+                text-transform: uppercase;
+                min-height: 44px; /* Ensure mobile touch target */
+                border: 1px solid var(--border-base); 
+                box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 4px 12px -2px rgba(0, 0, 0, 0.15);
+                cursor: pointer;
+                transition: all 0.4s var(--ease-premium);
+            }
+            .nav-pill.is-open #mobile-nav-toggle {
+                background: rgba(0, 0, 0, 0.03);
+                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+                border-color: rgba(0, 0, 0, 0.05);
+                margin-bottom: 8px;
+            }
 
-  @keyframes fade-up {
-    to { opacity: 1; transform: translateY(0); }
-  }
+            #mobile-nav-toggle .toggle-text-close { display: none; }
+            .nav-pill.is-open #mobile-nav-toggle .toggle-text-start { display: none; }
+            .nav-pill.is-open #mobile-nav-toggle .toggle-text-close { display: block; }
+            
+            .nav-items-wrapper {
+                display: grid;
+                grid-template-rows: 0fr;
+                transition: grid-template-rows 0.6s var(--ease-premium);
+                width: 100%;
+            }
+            .nav-pill.is-open .nav-items-wrapper {
+                grid-template-rows: 1fr;
+            }
+            
+            .nav-items-inner {
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding: 0 4px;
+            }
+            .nav-pill.is-open .nav-items-inner {
+                padding-bottom: 8px;
+                max-height: 60vh;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+            
+            .nav-pill a.route-btn {
+                width: 100%;
+                padding: 16px 20px;
+                margin: 0;
+                text-align: center;
+                border-radius: 12px;
+                font-size: 13px;
+            }
+        }
 
-  /* ── FILTER BAR ── */
-  .filter-bar {
-    position: relative;
-    z-index: 2;
-    padding: clamp(20px, 3vw, 32px) clamp(16px, 4vw, 48px);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    border-bottom: 1px solid var(--line);
-    background: rgba(8,8,8,0.8);
-    backdrop-filter: blur(12px);
-    -webkit-overflow-scrolling: touch;
-  }
-  .filter-bar::-webkit-scrollbar { display: none; }
+        /* ==========================================================================
+           LAYOUT & GRID SYSTEM (STRICT ALIGNMENT)
+           ========================================================================== */
+        .main-container {
+            /* Mobile-first padding alignment */
+            padding: var(--space-4) var(--space-4) var(--space-16);
+            max-width: 1800px;
+            margin: 0 auto;
+            width: 100%;
+        }
 
-  .filter-pill {
-    flex-shrink: 0;
-    font-family: var(--font-body);
-    font-style: italic;
-    font-size: 0.82rem;
-    letter-spacing: 0.1em;
-    color: var(--ink-dim);
-    padding: 6px 16px;
-    border: 1px solid var(--line);
-    border-radius: 100px;
-    cursor: pointer;
-    transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast), transform var(--t-fast);
-    white-space: nowrap;
-    background: transparent;
-    -webkit-appearance: none;
-    /* [AUDIT FIX] Instant tap registration */
-    touch-action: manipulation;
-  }
-  
-  .filter-pill.active {
-    color: var(--bg);
-    background: var(--accent);
-    border-color: var(--accent);
-    font-style: normal;
-  }
-  
-  /* [AUDIT FIX] Mobile interaction states */
-  .filter-pill:active { transform: scale(0.96); }
+        @media (min-width: 1024px) {
+            .main-container {
+                padding: var(--space-8) var(--space-8) var(--space-16);
+            }
+        }
 
-  /* ── GRID SECTION ── */
-  .grid-section {
-    position: relative;
-    z-index: 1;
-    padding: clamp(32px, 5vw, 60px) clamp(16px, 4vw, 48px);
-  }
+        .category-block {
+            margin-bottom: var(--space-16);
+            scroll-margin-top: 100px; 
+        }
 
-  .section-meta {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: clamp(20px, 3vw, 36px);
-  }
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
-    letter-spacing: 0.2em;
-    color: var(--ink-dim);
-    text-transform: uppercase;
-  }
-  .section-num {
-    font-family: var(--font-body);
-    font-style: italic;
-    font-size: 0.78rem;
-    color: var(--ink-ghost);
-  }
+        .category-header {
+            margin-bottom: var(--space-6);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            width: 100%;
+        }
 
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
-    gap: var(--gap);
-  }
+        .category-header::after { 
+            content: ''; 
+            flex-grow: 1; 
+            height: 1px; 
+            background: linear-gradient(90deg, rgba(0,0,0,0.1) 0%, transparent 100%); 
+        }
 
-  /* ── CARD ── */
-  .card {
-    position: relative;
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    overflow: hidden;
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-    transform: translateY(0);
-    transition: transform var(--t-mid) var(--ease-out), border-color var(--t-mid), box-shadow var(--t-mid);
-    opacity: 0;
-    animation: card-in var(--t-slow) var(--ease-out) forwards;
-  }
+        .section-badge {
+            position: relative; display: inline-flex; align-items: center; gap: 12px;
+            padding: 10px 24px 10px 18px; font-size: 11px; font-weight: 800;
+            font-family: var(--font-aeonik);
+            letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-on-bone); z-index: 1; border-radius: 4px;
+        }
 
-  @keyframes card-in {
-    to { opacity: 1; }
-  }
+        .section-badge::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-base); transform: skewX(-12deg); z-index: -1; border-radius: 3px;
+            box-shadow: 0 8px 20px -4px rgba(0,0,0,0.1); border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes magenta-pulse { 
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 0, 85, 0.5), 0 0 20px rgba(255, 0, 85, 0.3); opacity: 1; } 
+            50% { box-shadow: 0 0 16px rgba(255, 0, 85, 0.7), 0 0 28px rgba(255, 0, 85, 0.5); opacity: 0.7; } 
+        }
 
-  .card-preview {
-    position: relative;
-    width: 100%;
-    height: var(--card-h);
-    overflow: hidden;
-    background: var(--surface2);
-  }
+        @keyframes plasma-pulse { 
+            0%, 100% { box-shadow: 0 0 12px rgba(204, 255, 0, 0.5), 0 0 20px rgba(204, 255, 0, 0.3); opacity: 1; } 
+            50% { box-shadow: 0 0 16px rgba(204, 255, 0, 0.7), 0 0 28px rgba(204, 255, 0, 0.5); opacity: 0.7; } 
+        }
+        
+        .section-badge::after {
+            content: ''; width: 6px; height: 6px; background: var(--color-magenta); border-radius: 50%;
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.5), 0 0 20px rgba(255, 0, 85, 0.3); order: -1; animation: magenta-pulse 3s infinite ease-in-out;
+        }
 
-  /* Iframe wrapper — 100% LIVE and interactive */
-  .card-preview iframe {
-    position: absolute;
-    top: 0; left: 0;
-    width: 180%;
-    height: 180%;
-    transform: scale(0.556);
-    transform-origin: top left;
-    border: none;
-    pointer-events: auto; /* LIVE - you can click inside */
-    background: var(--surface2);
-  }
+        .module-count {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted-on-bone);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
 
-  /* Skeleton shimmer shown until iframe loads */
-  .card-preview .shimmer {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-      100deg,
-      var(--surface2) 0%,
-      var(--surface) 40%,
-      var(--surface2) 80%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-    transition: opacity 0.4s;
-    pointer-events: none;
-  }
-  .card-preview .shimmer.loaded { opacity: 0; }
+        .strict-grid {
+            display: grid;
+            /* Mathematics constraint to strictly prevent mobile viewport overflow */
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min-width)), 1fr));
+            gap: var(--grid-gap);
+            align-items: stretch;
+        }
 
-  @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-  }
+        /* ==========================================================================
+           PREVIEW CARDS (PERFORMANCE OPTIMIZED & ACCESSIBLE)
+           ========================================================================== */
+        .grid-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            height: 380px; 
+            position: relative;
+        }
 
-  /* Hover overlay */
-  .card-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: flex;
-    align-items: flex-end;
-    padding: 16px;
-    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 40%);
-    opacity: 0;
-    transition: opacity var(--t-mid) var(--ease-out);
-    pointer-events: none; /* Let clicks pass through to iframe */
-  }
+        .grid-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
 
-  .card-overlay-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
-  .card-overlay-label {
-    font-family: var(--font-display);
-    font-size: 0.68rem;
-    letter-spacing: 0.18em;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
-  
-  /* Open Button (Triggers the modal) */
-  .card-open-btn {
-    width: 30px; height: 30px;
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(8,8,8,0.5);
-    transition: background var(--t-fast), border-color var(--t-fast), transform var(--t-fast);
-    flex-shrink: 0;
-    cursor: pointer;
-    pointer-events: auto; /* Catch clicks for modal */
-    touch-action: manipulation;
-  }
-  .card-open-btn svg { width: 11px; height: 11px; fill: none; stroke: white; stroke-width: 1.8; transition: stroke var(--t-fast); }
-  
-  /* [AUDIT FIX] Mobile interaction states */
-  .card-open-btn:active { transform: scale(0.92); }
+        .grid-card:focus-visible {
+            outline: 3px solid var(--text-on-bone);
+            outline-offset: 4px;
+            z-index: 3;
+        }
 
-  /* Live badge */
-  .live-badge {
-    position: absolute;
-    top: 10px; right: 10px;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--font-display);
-    font-size: 0.55rem;
-    letter-spacing: 0.14em;
-    color: var(--ink);
-    background: rgba(8,8,8,0.8);
-    border: 1px solid var(--line);
-    border-radius: 100px;
-    padding: 3px 8px;
-    backdrop-filter: blur(8px);
-    pointer-events: none;
-  }
-  .live-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse-dot 2s infinite;
-  }
+        .card-meta {
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--border-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            background: var(--bg-card);
+            z-index: 10;
+        }
 
-  /* Card footer */
-  .card-footer {
-    padding: 12px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid var(--line);
-    cursor: pointer; /* Click footer to open modal */
-    background: var(--surface);
-    transition: background var(--t-fast);
-    touch-action: manipulation;
-  }
-  
-  .card-name {
-    font-family: var(--font-body);
-    font-size: 0.82rem;
-    font-style: italic;
-    color: var(--ink);
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 70%;
-  }
-  .card-tag {
-    font-family: var(--font-display);
-    font-size: 0.54rem;
-    letter-spacing: 0.16em;
-    color: var(--ink-ghost);
-    text-transform: uppercase;
-  }
+        .url-text {
+            font-family: var(--font-aeonik);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted-on-charcoal);
+            word-break: break-all;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-  /* ── LIGHTBOX / MODAL ── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 500;
-    background: rgba(0,0,0,0.92);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: clamp(16px, 4vw, 48px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--t-mid) var(--ease-out);
-    backdrop-filter: blur(12px);
-  }
-  .modal-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--dot-glow);
+            box-shadow: 0 0 12px rgba(204, 255, 0, 0.5), 0 0 20px rgba(204, 255, 0, 0.3);
+            flex-shrink: 0;
+            margin-top: 4px;
+            animation: plasma-pulse 3s infinite ease-in-out;
+        }
 
-  .modal-frame {
-    position: relative;
-    width: 100%;
-    max-width: 1100px;
-    aspect-ratio: 16/10;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    overflow: hidden;
-    transform: scale(0.94) translateY(16px);
-    transition: transform var(--t-slow) var(--ease-out);
-    background: var(--surface2);
-  }
-  .modal-overlay.open .modal-frame {
-    transform: scale(1) translateY(0);
-  }
+        .preview-window {
+            flex-grow: 1;
+            position: relative;
+            background: var(--canvas-inner);
+            overflow: hidden;
+        }
 
-  .modal-frame iframe {
-    width: 100%; height: 100%;
-    border: none;
-  }
+        .loader-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader-text {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-on-charcoal);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            background: var(--bg-card);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-card);
+        }
 
-  .modal-close {
-    position: absolute;
-    top: -14px; right: -14px;
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: var(--bg);
-    border: none;
-    cursor: pointer;
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 10;
-    transition: background var(--t-fast), transform var(--t-fast);
-    touch-action: manipulation;
-  }
-  .modal-close:active { transform: scale(0.9); }
+        .live-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            transform-origin: top left;
+            border: none;
+            pointer-events: none; 
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 2;
+            background: #ffffff;
+        }
 
-  .modal-bar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    background: rgba(8,8,8,0.9);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid var(--line);
-    z-index: 5;
-  }
-  .modal-title {
-    font-family: var(--font-display);
-    font-size: 0.72rem;
-    letter-spacing: 0.16em;
-    color: var(--ink);
-    text-transform: uppercase;
-  }
-  .modal-link {
-    font-family: var(--font-body);
-    font-style: italic;
-    font-size: 0.78rem;
-    color: var(--accent);
-    text-decoration: none;
-    display: flex; align-items: center; gap: 6px;
-    transition: color var(--t-fast);
-    touch-action: manipulation;
-  }
-  .modal-link svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2; }
+        .live-iframe.is-loaded {
+            opacity: 1;
+        }
 
-  /* ── FOOTER ── */
-  footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid var(--line);
-    padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .footer-brand {
-    font-family: var(--font-display);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    color: var(--ink-dim);
-  }
-  .footer-note {
-    font-family: var(--font-body);
-    font-style: italic;
-    font-size: 0.78rem;
-    color: var(--ink-ghost);
-  }
+        .preview-window:has(.live-iframe.is-loaded) .loader-pattern {
+            opacity: 0;
+        }
 
-  /* ── SCROLL REVEAL ── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+        .card-action {
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-card);
+            background: var(--bg-card);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
 
-  /* stagger delays for cards */
-  .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.10s; }
-  .card:nth-child(3) { animation-delay: 0.15s; }
-  .card:nth-child(4) { animation-delay: 0.20s; }
-  .card:nth-child(5) { animation-delay: 0.25s; }
-  .card:nth-child(6) { animation-delay: 0.30s; }
-  .card:nth-child(7) { animation-delay: 0.35s; }
-  .card:nth-child(8) { animation-delay: 0.40s; }
-  .card:nth-child(n+9) { animation-delay: 0.45s; }
+        .action-label {
+            font-family: var(--font-label);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-on-charcoal);
+        }
 
-  /* ── SCROLL INDICATOR ── */
-  .scroll-prog {
-    position: fixed;
-    top: 0; left: 0;
-    height: 2px;
-    background: var(--accent);
-    z-index: 200;
-    width: 0%;
-    transition: width 0.1s linear;
-    box-shadow: 0 0 8px var(--accent);
-  }
+        .action-arrow {
+            width: 16px;
+            height: 16px;
+            fill: none;
+            stroke: var(--check-glow);
+            stroke-width: 2;
+            filter: drop-shadow(0 0 4px rgba(227, 223, 213, 0.4));
+            transition: stroke 0.2s ease, transform 0.2s ease;
+        }
 
-  /* ── TOUCH RIPPLE ── */
-  .ripple {
-    position: fixed;
-    border-radius: 50%;
-    transform: scale(0);
-    pointer-events: none;
-    z-index: 9990;
-    border: 1px solid rgba(200,245,100,0.4);
-    animation: ripple-out 0.6s var(--ease-out) forwards;
-  }
-  @keyframes ripple-out {
-    to { transform: scale(1); opacity: 0; }
-  }
+        .grid-card:hover .action-arrow {
+            transform: translateX(4px);
+        }
 
-  /* * ==========================================
-   * [AUDIT FIX] SAFELY SCOPED DESKTOP HOVERS
-   * Removes sticky hover regression on mobile touch devices
-   * ==========================================
-   */
-  @media (hover: hover) and (pointer: fine) {
-    .hero-scroll:hover { color: var(--ink-dim); }
-    .hero-scroll:hover .scroll-arrow { border-color: var(--accent); transform: translateY(4px); }
-    
-    .filter-pill:hover { color: var(--ink); border-color: rgba(255,255,255,0.2); }
-    
-    .card:hover { 
-      transform: translateY(-4px); 
-      border-color: rgba(200,245,100,0.2); 
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,245,100,0.08) inset; 
-    }
-    .card:hover .card-overlay { opacity: 1; }
-    
-    .card-open-btn:hover { background: var(--accent); border-color: var(--accent); transform: rotate(45deg) scale(1.1); }
-    .card-open-btn:hover svg { stroke: var(--bg); }
-    
-    .card-footer:hover { background: rgba(255,255,255,0.03); }
-    
-    .modal-close:hover { background: var(--accent); transform: rotate(90deg); }
-    .modal-link:hover { color: var(--ink); }
-    
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-  }
+        /* ==========================================================================
+           BNDR CORE FOOTER (PORTED FROM MAIN SITE)
+           ========================================================================== */
+        #bndr-core-footer {
+            background: var(--void);
+            color: var(--bone);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            font-family: 'Inter', var(--font-aeonik), sans-serif;
+            position: relative;
+            z-index: 9998;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: auto; /* Pushes footer to the absolute bottom of the viewport */
+        }
 
-  /* * ==========================================
-   * [AUDIT FIX] HIGH-PRECISION MOBILE UX LAYER
-   * Enforcing HIG touch targets, native scrolling, and precise scaling
-   * ==========================================
-   */
-  @media (max-width: 600px) {
-    :root { 
-      --card-w: 100%; 
-      --card-h: 280px; /* Enhanced height for native 1:1 mobile render ratio */
-    }
-    .cards-grid { grid-template-columns: 1fr; }
-    
-    header { padding: 14px 16px; }
-    .hero { padding: 100px 16px 40px; }
-    .grid-section { padding: 24px 16px; }
-    
-    /* Touch Target Sizing (min 44px equivalent) */
-    .filter-pill { padding: 10px 20px; font-size: 0.9rem; }
-    .card-footer { padding: 16px; min-height: 56px; } 
-    
-    /* Native Scroll Spacer Injection - Prevents last item from snapping hard to the edge */
-    .filter-bar { padding: 14px 0 14px 16px; }
-    .filter-bar::after { content: ''; flex: 0 0 16px; }
+        .f-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            height: var(--f-h);
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1.2fr 3.2fr 1.6fr 1fr;
+            align-items: center;
+            gap: 16px;
+        }
 
-    /* Iframe Render Accuracy: Un-scale the iframe so child sites evaluate true mobile breakpoints */
-    .card-preview iframe {
-      width: 100%; 
-      height: 100%;
-      transform: none; 
-    }
+        /* Axis 1: Legal + Mail */
+        .f-axis-legal { display: flex; flex-direction: column; gap: 2px; }
+        .f-row { display: flex; gap: 12px; }
+        .f-axis-legal a { 
+            font-size: 9px; font-weight: 700; color: var(--bone); 
+            text-decoration: none; opacity: 0.5; transition: 0.2s var(--f-ease);
+        }
+        .f-axis-legal a:hover { opacity: 1; color: var(--plasma); }
 
-    /* Interaction Discovery: Guarantee overlay actions are visible without hover state */
-    .card-overlay { 
-      opacity: 1; 
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);
-      padding: 12px;
-    }
-    
-    /* Thumb-zone optimized action button */
-    .card-open-btn {
-      width: 44px; 
-      height: 44px;
-      background: rgba(8,8,8,0.7);
-      backdrop-filter: blur(4px);
-      border-color: rgba(255,255,255,0.15);
-    }
-    .card-open-btn svg { width: 14px; height: 14px; }
+        /* Axis 2: High-Density Social Belt */
+        .f-belt { display: flex; gap: 16px; justify-content: center; }
+        .f-belt a {
+            display: flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; /* Optimized hit-box */
+            transition: transform 0.2s var(--f-ease);
+        }
+        .f-belt svg { width: 16px; height: 16px; transition: 0.3s; opacity: 0.85; }
+        
+        .f-belt a:hover { transform: translateY(-2px); }
+        .f-belt a:hover svg { opacity: 1; filter: url(#fizzle-physics); }
+        
+        .f-belt .li svg { fill: var(--c-li); }
+        .f-belt .ss svg { fill: var(--c-ss); }
+        .f-belt .gh svg { fill: var(--c-gh); }
+        .f-belt .ig svg { fill: var(--c-ig); }
+        .f-belt .fb svg { fill: var(--c-fb); }
+        .f-belt .bc svg { fill: var(--c-bc); }
+        .f-belt .gr svg { fill: var(--c-gr); }
+        .f-belt .pb svg { fill: var(--c-pb); }
 
-    /* Modal Mobile Geometry: Reposition close button to avoid viewport clipping, adjust bounds */
-    .modal-overlay { 
-      padding: 16px; 
-      align-items: center; 
-    }
-    .modal-frame { 
-      height: calc(100dvh - 32px);
-      aspect-ratio: auto; 
-      transform: scale(0.96) translateY(0);
-    }
-    .modal-overlay.open .modal-frame {
-      transform: scale(1) translateY(0);
-    }
-    .modal-close {
-      top: 12px; 
-      right: 12px;
-      width: 44px; 
-      height: 44px;
-      background: rgba(8,8,8,0.7);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.15);
-    }
-  }
+        /* Axis 3: Clinical Actions */
+        .f-actions { display: flex; gap: 12px; justify-content: flex-end; }
+        .f-util {
+            font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+            text-decoration: none; color: var(--bone);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px; border-radius: 4px;
+            transition: 0.2s; cursor: pointer; background: transparent;
+            white-space: nowrap; text-transform: uppercase;
+        }
+        .f-util:hover, .f-util:active { background: var(--bone); color: var(--void); }
 
-  @media (min-width: 601px) and (max-width: 900px) {
-    :root { --card-w: 46%; --card-h: 200px; }
-    .cards-grid { grid-template-columns: repeat(2, 1fr); }
-  }
+        /* Axis 4: Metrics */
+        .f-meta { text-align: right; }
+        .f-time { font-family: monospace; font-size: 10px; font-weight: 700; color: var(--bone); margin-bottom: 2px; }
+        .f-copy { font-size: 8px; font-weight: 600; opacity: 0.3; text-transform: uppercase; }
 
-  ::selection { background: var(--accent); color: var(--bg); }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-</style>
+        /* === CROSS-PLATFORM MOBILE OVERRIDES === */
+        @media (max-width: 1100px) {
+            #bndr-core-footer { height: auto; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+            .f-layout { 
+                grid-template-columns: 1fr; height: auto; 
+                padding: 20px 16px; gap: 20px; 
+            }
+            .f-belt { flex-wrap: wrap; gap: 16px; order: 1; justify-content: space-evenly; }
+            .f-belt a { width: 36px; height: 36px; } 
+            .f-belt svg { width: 18px; height: 18px; }
+            
+            .f-axis-legal { order: 2; align-items: center; text-align: center; gap: 4px; }
+            .f-actions { order: 3; justify-content: center; gap: 12px; }
+            .f-util { padding: 8px 16px; font-size: 10px; }
+            
+            .f-meta { order: 4; text-align: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
+        }
+
+    </style>
 </head>
 <body>
 
-<div class="scroll-prog" id="scrollProg"></div>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+    <div class="spatial-background"></div>
 
-<!-- HEADER -->
-<header>
-  <a class="logo" href="#" aria-label="BNDR">
-    BNDR
-    <span class="logo-dot" aria-hidden="true"></span>
-  </a>
-  <span class="header-count" id="countDisplay">.. works</span>
-</header>
+    <header class="global-header" role="banner">
+        <a href="#" class="brand-logo">
+            <img src="https://dl.dropboxusercontent.com/scl/fi/9z9t4iy7758k9tsa9k4ia/BNDR2026Logo5btp.png?rlkey=1baik8nzrx8n7rhj53q0nq449&st=owom8o9n&raw=1" alt="BNDR.OS Logo">
+        </a>
+    </header>
 
-<!-- HERO -->
-<section class="hero" aria-label="Introduction">
-  <div class="hero-bg" aria-hidden="true">
-    <div class="hero-grid-lines"></div>
-    <div class="hero-orb orb-1"></div>
-    <div class="hero-orb orb-2"></div>
-    <div class="hero-orb orb-3"></div>
-  </div>
-  <div class="hero-content">
-    <p class="hero-label">Live Portfolio</p>
-    <h1 class="hero-title">
-      The Work
-      <em>by BNDR</em>
-    </h1>
-    <p class="hero-sub">Every piece is a live site. Every click goes somewhere real. No screenshots. No fakes.</p>
-    <div class="hero-scroll" role="button" tabindex="0" aria-label="Scroll to work" onclick="document.getElementById('work').scrollIntoView({behavior:'smooth'})">
-      <span class="scroll-arrow">
-        <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 1v10M1 7l5 5 5-5"/></svg>
-      </span>
-      scroll to work
-    </div>
-  </div>
-</section>
+    <nav class="nav-pill" id="main-nav" aria-label="Main Navigation">
+        <button id="mobile-nav-toggle" class="mobile-only-toggle" aria-expanded="false">
+            <span class="toggle-text-start">MENU</span>
+            <span class="toggle-text-close">CLOSE</span>
+        </button>
+        <div class="nav-items-wrapper">
+            <div class="nav-items-inner">
+                <a class="route-btn" href="#resources">Resources</a>
+                <a class="route-btn" href="#games">Play</a>
+                <a class="route-btn" href="#utility">Toolbox</a>
+                <a class="route-btn" href="#saas">SaaS</a>
+                <a class="route-btn" href="#breathing">Relax</a>
+                <a class="route-btn" href="#elegance">Style</a>
+                <a class="route-btn" href="#sophistication">Class</a>
+                <a class="route-btn" href="#brand">Brand</a>
+                <a class="route-btn" href="#hometown">Roots</a>
+                <a class="route-btn" href="#treelinkrs">Portfolios</a>
+                <a class="route-btn" href="#sight-movement">Sight+Movement</a>
+                <a class="route-btn" href="#sound-sight">Sound+Sight</a>
+                <a class="route-btn" href="#additional">Additional</a>
+            </div>
+        </div>
+    </nav>
 
-<!-- FILTER BAR -->
-<nav class="filter-bar reveal" id="filterBar" aria-label="Filter projects">
-  <button class="filter-pill active" data-filter="all">All</button>
-  <button class="filter-pill" data-filter="linktree">Linktree</button>
-  <button class="filter-pill" data-filter="roguerita">Rogue Rita</button>
-  <button class="filter-pill" data-filter="physics">Physics</button>
-  <button class="filter-pill" data-filter="creative">Creative</button>
-  <button class="filter-pill" data-filter="tool">Tools</button>
-  <button class="filter-pill" data-filter="brand">Brand</button>
-</nav>
+    <main class="main-container" id="grid-mount" role="main">
+    </main>
 
-<!-- GRID -->
-<section class="grid-section" id="work">
-  <div class="section-meta">
-    <span class="section-title">Selected Work</span>
-    <span class="section-num" id="visibleCount">.. projects</span>
-  </div>
-  <div class="cards-grid" id="cardsGrid" role="list">
-  </div>
-</section>
+    <!-- SVG DISTORTION ENGINE -->
+    <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
+        <filter id="fizzle-physics">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="1">
+                <animate attributeName="seed" from="1" to="100" dur="0.5s" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" scale="4" />
+        </filter>
+    </svg>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Project preview">
-  <div class="modal-frame" id="modalFrame">
-    <button class="modal-close" id="modalClose" aria-label="Close preview">✕</button>
-    <iframe id="modalIframe" title="Project preview" loading="lazy" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
-    <div class="modal-bar">
-      <span class="modal-title" id="modalTitle"></span>
-      <a class="modal-link" id="modalExtLink" href="#" target="_blank" rel="noopener noreferrer">
-        Open full site
-        <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 9L9 1M3 1h6v6"/></svg>
-      </a>
-    </div>
-  </div>
-</div>
+    <footer id="bndr-core-footer" role="contentinfo">
+        <div class="f-layout">
+            <!-- 01: COMPLIANCE -->
+            <div class="f-axis-legal">
+                <div class="f-row">
+                    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=dgn3s7uz&dl=0" target="_blank">PRIVACY</a>
+                    <a href="https://www.dropbox.com/scl/fi/kojw24oymxcuku5r2nupj/terms.html?rlkey=zlta95mcdxzqd9qjkbk38alhl&st=af3kun5i&dl=0" target="_blank">TERMS</a>
+                </div>
+                <a href="mailto:bndr.labs@gmail.com" style="opacity: 0.3;">BNDR.LABS@GMAIL.COM</a>
+            </div>
 
-<!-- FOOTER -->
-<footer>
-  <span class="footer-brand">BNDR LLC</span>
-  <span class="footer-note">Built by hand. Live and breathing.</span>
-</footer>
+            <!-- 02: BRAND BELT -->
+            <div class="f-belt">
+                <a href="https://www.linkedin.com/in/bndrtech/" class="li" aria-label="LinkedIn" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </a>
+                <a href="https://substack.com/@bndrllc" class="ss" aria-label="Substack" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
+                </a>
+                <a href="https://github.com/bndrbots" class="gh" aria-label="GitHub" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113-.82-.258-.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                </a>
+                <a href="https://www.instagram.com/bndrllc" class="ig" aria-label="Instagram" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm3.98-10.98a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                </a>
+                <a href="https://www.facebook.com/BNDRLLC" class="fb" aria-label="Facebook" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                </a>
+                <a href="https://buymeacoffee.com/bndr" class="bc" aria-label="Coffee" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M20.216 10.372c-.08-.43-.464-.741-.9-.741h-1.576V6.155c0-1.283-1.042-2.325-2.325-2.325H4.557C3.275 3.83 2.233 4.872 2.233 6.155v7.26c0 2.41 1.957 4.367 4.367 4.367h6.634c2.25 0 4.108-1.71 4.336-3.905h1.218c1.378 0 2.502-1.124 2.502-2.502.001-1.037-.803-1.886-1.074-2.003zM15.415 15.61H6.6c-1.21 0-2.195-.985-2.195-2.195V6.155c0-.085.068-.153.153-.153h10.858c.085 0 .153.068.153.153v9.455zm2.934-2.906h-1.173V11.8h1.173c.18 0 .327.147.327.327 0 .314-.262.578-.327.578zM10.15 2.115c.29-.29.29-.757 0-1.047-.29-.29-.757-.29-1.047 0-.29.29-.29.757 0 1.047.29.29.756.29 1.047 0zm3.87 0c.29-.29.29-.757 0-1.047-.29-.29-.757-.29-1.047 0-.29.29-.29.757 0 1.047.29.29.756.29 1.047 0z"/></svg>
+                </a>
+                <a href="https://bndrllc.gumroad.com/" class="gr" aria-label="Gumroad" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M18.8 8.43c0 2.84-2.28 5.16-5.12 5.16-2.85 0-5.17-2.32-5.17-5.16 0-2.85 2.32-5.17 5.17-5.17 2.84 0 5.12 2.32 5.12 5.17zm-10.29 0c0-1.93-1.44-3.52-3.32-3.76v7.52c1.88-.24 3.32-1.83 3.32-3.76zM13.68 20.8v-5.63c-2.3-.4-4.14-2.19-4.63-4.46H3.45c.44 5.33 4.9 9.55 10.23 10.09z"/></svg>
+                </a>
+                <a href="https://promptbase.com/profile/bndrllc" class="pb" aria-label="PromptBase" target="_blank">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </a>
+            </div>
+
+            <!-- 03: ACTIONS -->
+            <div class="f-actions">
+                <a href="tel:7179197731" class="f-util">Call Direct</a>
+                <button class="f-util connect-section-trigger">Start Build</button>
+            </div>
+
+            <!-- 04: CHRONOS -->
+            <div class="f-meta">
+                <div class="f-time" id="f-clock-active">00:00:00</div>
+                <div class="f-copy">© 2026 BNDR LLC</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            // Precise Clock Sync
+            const clk = document.getElementById('f-clock-active');
+            const updateClock = () => {
+                if(clk) clk.textContent = new Date().toTimeString().split(' ')[0];
+            };
+            setInterval(updateClock, 1000); updateClock();
+        })();
+
+        const linkData = [
+            {
+                category: "RESOURCES",
+                id: "resources",
+                links: ["https://bndrbots.github.io/resourcecite/#home"]
+            },
+            {
+                category: "PLAY",
+                id: "games",
+                links: [
+                    "https://bndrbots.github.io/RogueRitaV3/",
+                    "https://bndrbots.github.io/RogueRitaV2/",
+                    "https://bndrbots.github.io/RogueRitaV1/",
+                    "https://bndrbots.github.io/endlessfocus/",
+                    "https://bndrbots.github.io/calmheist/"
+                ]
+            },
+            {
+                category: "TOOLBOX",
+                id: "utility",
+                links: [
+                    "https://bndrbots.github.io/mindcan/",
+                    "https://bndrbots.github.io/BNDRVoice/",
+                    "https://bndrbots.github.io/decisionengine/",
+                    "https://bndrbots.github.io/slct/",
+                    "https://bndrbots.github.io/binaural/",
+                    "https://bndrbots.github.io/BNDR_LifeMatrix/",
+                    "https://bndrbots.github.io/BNDR-Dashboard/",
+                    "https://bndrbots.github.io/transcriber/"
+                ]
+            },
+            {
+                category: "SAAS",
+                id: "saas",
+                links: ["https://bndrbots.github.io/forma/", "https://bndrbots.github.io/raydeo/"]
+            },
+            {
+                category: "RELAX",
+                id: "breathing",
+                links: [
+                    "https://bndrbots.github.io/Qalm/",
+                    "https://bndrbots.github.io/breathemachine/",
+                    "https://bndrbots.github.io/breather/",
+                    "https://bndrbots.github.io/rosefieldvip/",
+                    "https://bndrbots.github.io/crystal_love/"
+                ]
+            },
+            {
+                category: "STYLE",
+                id: "elegance",
+                links: [
+                    "https://bndrbots.github.io/EpochAura/",
+                    "https://bndrbots.github.io/Sangredelsol/",
+                    "https://bndrbots.github.io/controlledoutput/",
+                    "https://bndrbots.github.io/interactivelander/"
+                ]
+            },
+            {
+                category: "CLASS",
+                id: "sophistication",
+                links: [
+                    "https://bndrbots.github.io/immersion/",
+                    "https://bndrbots.github.io/PrivateWealth/",
+                    "bndrbots.github.io/jacksons/",
+                    "https://bndrbots.github.io/Voss/",
+                    "https://bndrbots.github.io/Biltmore_Advisory/",
+                    "https://bndrbots.github.io/BNDR_Audits/"
+                ]
+            },
+            {
+                category: "BRAND",
+                id: "brand",
+                links: [
+                    "https://bndrbots.github.io/VenomCuts/",
+                    "https://bndrbots.github.io/northr/",
+                    "https://bndrbots.github.io/reflex/",
+                    "https://bndrbots.github.io/TheFeedUpgraded/",
+                    "https://bndrbots.github.io/verdict/",
+                    "https://bndrbots.github.io/demo/"
+                ]
+            },
+            {
+                category: "ROOTS",
+                id: "hometown",
+                links: ["https://bndrbots.github.io/Evies_Cafe/"]
+            },
+            {
+                category: "PORTFOLIOS",
+                id: "treelinkrs",
+                links: [
+                    "https://bndrbots.github.io/linktree1/",
+                    "https://bndrbots.github.io/obsidianlinktree/",
+                    "https://bndrbots.github.io/sharplinktreefx/",
+                    "https://bndrbots.github.io/LinkTreePlus/#home",
+                    "https://bndrbots.github.io/Linktree3/"
+                ]
+            },
+            {
+                category: "SIGHT+MOVEMENT (CONCEPTS)",
+                id: "sight-movement",
+                links: [
+                    "https://bndrbots.github.io/heavyink/",
+                    "https://bndrbots.github.io/bruma/",
+                    "https://bndrbots.github.io/patience/",
+                    "https://bndrbots.github.io/fluidribbon/",
+                    "https://bndrbots.github.io/secondchancephysics/",
+                    "https://bndrbots.github.io/pixelmelt/",
+                    "https://bndrbots.github.io/lifespace/",
+                    "https://bndrbots.github.io/liquidglass/",
+                    "https://bndrbots.github.io/demo/",
+                    "https://bndrbots.github.io/thewaitinggame/",
+                    "https://bndrbots.github.io/gravitywells/",
+                    "https://bndrbots.github.io/distortion/",
+                    "https://bndrbots.github.io/DATASTREAM/",
+                    "https://bndrbots.github.io/volumetric/"
+                ]
+            },
+            {
+                category: "SOUND+SIGHT+MOVEMENT (CONCEPTS)",
+                id: "sound-sight",
+                links: [
+                    "https://bndrbots.github.io/zen/",
+                    "https://bndrbots.github.io/oilflux/",
+                    "https://bndrbots.github.io/playinginthedark/",
+                    "https://bndrbots.github.io/solarexpanse/",
+                    "https://bndrbots.github.io/fluidity/",
+                    "https://bndrbots.github.io/zen/",
+                    "https://bndrbots.github.io/Bluestrunimous/",
+                    "https://bndrbots.github.io/templegarden/",
+                    "https://bndrbots.github.io/bendystrings/",
+                    "https://bndrbots.github.io/acousticshockwave/",
+                    "https://bndrbots.github.io/boop/",
+                    "https://bndrbots.github.io/morph_black/",
+                    "https://bndrbots.github.io/somaflux/"
+                ]
+            },
+            {
+                category: "ADDITIONAL TOOLS",
+                id: "additional",
+                links: [
+                    "https://bndrbots.github.io/Graffiti-Generator/",
+                    "https://bndrbots.github.io/Prompt-Vault-Retro-Code-Cards/",
+                    "https://bndrbots.github.io/ctnc/"
+                ]
+            }
+        ];
+
+        const mount = document.getElementById('grid-mount');
+        function formatHref(url) { return url.startsWith('http') ? url : `https://${url}`; }
+
+        let htmlString = '';
+        linkData.forEach(section => {
+            htmlString += `
+                <section id="${section.id}" class="category-block">
+                    <header class="category-header">
+                        <div class="section-badge">${section.category}</div>
+                        <span class="module-count">${section.links.length} modules</span>
+                    </header>
+                    <div class="strict-grid">
+                        ${section.links.map(url => `
+                            <a href="${formatHref(url)}" target="_blank" rel="noopener noreferrer" class="grid-card" data-url="${formatHref(url)}">
+                                <div class="card-meta">
+                                    <span class="url-text">${url}</span>
+                                    <div class="status-dot"></div>
+                                </div>
+                                <div class="preview-window">
+                                    <div class="loader-pattern"><span class="loader-text">Awaiting Render</span></div>
+                                </div>
+                                <div class="card-action">
+                                    <span class="action-label">Open Application</span>
+                                    <svg class="action-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </div>
+                            </a>
+                        `).join('')}
+                    </div>
+                </section>
+            `;
+        });
+        mount.innerHTML = htmlString;
+
+        const previewWindows = document.querySelectorAll('.grid-card');
+        const requestIdle = window.requestIdleCallback || function(cb) { setTimeout(cb, 1); };
+        
+        const previewObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const targetWindow = entry.target.querySelector('.preview-window');
+                if (entry.isIntersecting) {
+                    if (!targetWindow.querySelector('.live-iframe')) {
+                        requestIdle(() => {
+                            if (!entry.isIntersecting) return; 
+                            const iframe = document.createElement('iframe');
+                            iframe.className = 'live-iframe';
+                            iframe.loading = 'lazy';
+                            iframe.sandbox = 'allow-scripts allow-same-origin';
+                            iframe.src = entry.target.dataset.url;
+                            iframe.onload = () => iframe.classList.add('is-loaded');
+                            targetWindow.appendChild(iframe);
+                        });
+                    }
+                } else {
+                    const existingIframe = targetWindow.querySelector('.live-iframe');
+                    if (existingIframe) existingIframe.remove();
+                }
+            });
+        }, { rootMargin: '100% 0px 100% 0px' });
+        
+        previewWindows.forEach(card => previewObserver.observe(card));
+
+        // Nav Pill Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const navPill = document.getElementById('main-nav');
+            const mobileToggle = document.getElementById('mobile-nav-toggle');
+            
+            if (mobileToggle && navPill) {
+                mobileToggle.addEventListener('click', () => {
+                    navPill.classList.toggle('is-open');
+                    mobileToggle.setAttribute('aria-expanded', navPill.classList.contains('is-open'));
+                });
+                
+                navPill.querySelectorAll('.route-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        navPill.classList.remove('is-open');
+                        mobileToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+
+            setTimeout(() => {
+                if(navPill) navPill.classList.add('is-loaded');
+            }, 100);
+
+            let lastScroll = 0;
+            let scrollEndTimer = null;
+            window.addEventListener('scroll', () => {
+                clearTimeout(scrollEndTimer);
+                const currentScroll = window.scrollY;
+                
+                if (currentScroll > 150 && currentScroll > lastScroll) {
+                    navPill.classList.add('hidden');
+                } else {
+                    navPill.classList.remove('hidden');
+                }
+                lastScroll = currentScroll;
+            }, { passive: true });
+        });
+
+    </script>
+
+<!-- Universal Code: Sharp 14 px Point‑Cursor with Smooth Hex Colour Morphing (4 custom hex values) -->
+<style>
+  * { cursor: none !important; }
+
+  #point-cursor-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 999999;
+    /* difference blend still ensures visibility; the morphing colour adds a metallic sheen */
+    mix-blend-mode: difference;
+    will-change: transform;
+    transition: transform 0.08s ease-out;
+  }
+
+  .point-shape {
+    display: block;
+    width: 14px;
+    height: 14px;
+    transform-origin: center center;
+    filter: url(#point-glow);
+    transition: transform 0.25s ease;
+  }
+
+  .rotating .point-shape {
+    animation: point-spin 1.2s linear infinite;
+  }
+
+  @keyframes point-spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute;display:none;">
+  <defs>
+    <filter id="point-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
 
 <script>
-(function() {
-  'use strict';
+  (function () {
+    // ************ CONFIGURE YOUR 4 HEX COLOURS HERE ************
+   const HEX_LIST = ['#E8E4DF', '#404040', '#CCFF00', '#FF0055'];  // bone, charcoal, plasma, magenta
+    // ************************************************************
 
-  // ── DATA ──
-  const PROJECTS = [
-    { url: 'https://bndrbots.github.io/resourcecite/#home',       name: 'Resource Cite',         tag: 'tool',      label: 'Tool' },
-    { url: 'https://bndrbots.github.io/crystal_love/',            name: 'Crystal Love',          tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/sport_formal/',            name: 'Sport Formal',          tag: 'brand',     label: 'Brand' },
-    { url: 'https://bndrbots.github.io/CRYSTAL-GATE/',            name: 'Crystal Gate',          tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/immersion/',               name: 'Immersion',             tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/white_carousel/',          name: 'White Carousel',        tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/ShadowGraffiti/',          name: 'Shadow Graffiti',       tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/BNDRVoice/',               name: 'BNDR Voice',            tag: 'tool',      label: 'Tool' },
-    { url: 'https://bndrbots.github.io/demo/',                    name: 'Demo',                  tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/linktree1/',               name: 'Linktree 1',            tag: 'linktree',  label: 'Linktree' },
-    { url: 'https://bndrbots.github.io/linktree2/',               name: 'Linktree 2',            tag: 'linktree',  label: 'Linktree' },
-    { url: 'https://bndrbots.github.io/sharplinktreefx/',         name: 'Sharp Linktree FX',     tag: 'linktree',  label: 'Linktree' },
-    { url: 'https://bndrbots.github.io/LinkTreePlus/#home',       name: 'Linktree Plus',         tag: 'linktree',  label: 'Linktree' },
-    { url: 'https://bndrbots.github.io/Linktree3/',               name: 'Linktree 3',            tag: 'linktree',  label: 'Linktree' },
-    { url: 'https://bndrbots.github.io/Graffiti-Generator/',      name: 'Graffiti Generator',    tag: 'tool',      label: 'Tool' },
-    { url: 'https://bndrbots.github.io/breather/',                name: 'Breather',              tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/rosefieldvip/',            name: 'Rosefield VIP',         tag: 'brand',     label: 'Brand' },
-    { url: 'https://bndrbots.github.io/rosefield/',               name: 'Rosefield',             tag: 'brand',     label: 'Brand' },
-    { url: 'https://bndrbots.github.io/somaflux/',                name: 'Soma Flux',             tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/bruma/',                   name: 'Bruma',                 tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/donothing/',               name: 'Do Nothing',            tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/reflex/',                  name: 'Reflex',                tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/lifespace/',               name: 'Life Space',            tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/heavyink/',                name: 'Heavy Ink',             tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/pixelmelt/',               name: 'Pixel Melt',            tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/liquidglass/',             name: 'Liquid Glass',          tag: 'physics',   label: 'Physics' },
-    { url: 'https://bndrbots.github.io/calmheist/',               name: 'Calm Heist',            tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/secondchancephysics/',     name: 'Second Chance Physics', tag: 'physics',   label: 'Physics' },
-    { url: 'https://bndrbots.github.io/gravitywells/',            name: 'Gravity Wells',         tag: 'physics',   label: 'Physics' },
-    { url: 'https://bndrbots.github.io/acousticshockwave/',       name: 'Acoustic Shockwave',    tag: 'physics',   label: 'Physics' },
-    { url: 'https://bndrbots.github.io/fluidribbon/',             name: 'Fluid Ribbon',          tag: 'physics',   label: 'Physics' },
-    { url: 'https://bndrbots.github.io/cyber_playground/',        name: 'Cyber Playground',      tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/RogueRitaV3/',             name: 'Rogue Rita V3',         tag: 'roguerita', label: 'Rogue Rita' },
-    { url: 'https://bndrbots.github.io/RogueRitaV2/',             name: 'Rogue Rita V2',         tag: 'roguerita', label: 'Rogue Rita' },
-    { url: 'https://bndrbots.github.io/patience/',                name: 'Patience',              tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/jacksons/',                name: 'Jacksons',              tag: 'brand',     label: 'Brand' },
-    { url: 'https://bndrbots.github.io/oilflux/',                 name: 'Oil Flux',              tag: 'physics',   label: 'Physics' },
-    { url: 'https://bndrbots.github.io/thewaitinggame/',          name: 'The Waiting Game',      tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/RogueRitaV1/',             name: 'Rogue Rita V1',         tag: 'roguerita', label: 'Rogue Rita' },
-    { url: 'https://bndrbots.github.io/morph_black/',             name: 'Morph Black',           tag: 'creative',  label: 'Creative' },
-    { url: 'https://bndrbots.github.io/memory/',                  name: 'Memory',                tag: 'creative',  label: 'Creative' },
-  ];
+    const pointSVG = `
+      <svg class="point-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,0 62,38 100,50 62,62 50,100 38,62 0,50 38,38" fill="var(--cursor-color, white)" />
+      </svg>`;
 
-  const seen = new Set();
-  const DEDUPED = PROJECTS.filter(p => {
-    const key = p.url.replace(/\/+$/, '');
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+    const container = document.createElement('div');
+    container.id = 'point-cursor-container';
+    container.innerHTML = pointSVG;
+    document.body.appendChild(container);
 
-  document.getElementById('countDisplay').textContent = DEDUPED.length + ' works';
+    // ----- Colour interpolation engine (pure hex morph) -----
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.slice(1), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(c => Math.round(c).toString(16).padStart(2, '0')).join('');
+    }
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+    function interpolateHex(hex1, hex2, t) {
+      const c1 = hexToRgb(hex1);
+      const c2 = hexToRgb(hex2);
+      return rgbToHex(
+        lerp(c1.r, c2.r, t),
+        lerp(c1.g, c2.g, t),
+        lerp(c1.b, c2.b, t)
+      );
+    }
 
-  const grid = document.getElementById('cardsGrid');
-  let activeFilter = 'all';
-  let modalOpen = false;
+    const cycleDuration = 1200; // 0.1 seconds per segment – quick, electric flow
+    let startTime = performance.now();
+    function morphColour() {
+      const now = performance.now();
+      const elapsed = now - startTime;
+      const segmentCount = HEX_LIST.length;
+      const totalTime = segmentCount * cycleDuration;
+      const scaledT = (elapsed % totalTime) / totalTime; // 0–1 over full cycle
 
-  function buildCards() {
-    grid.innerHTML = '';
-    const visible = DEDUPED.filter(p => activeFilter === 'all' || p.tag === activeFilter);
-    document.getElementById('visibleCount').textContent = visible.length + ' project' + (visible.length !== 1 ? 's' : '');
+      const segmentFloat = scaledT * segmentCount;
+      const idx = Math.floor(segmentFloat);
+      const t = segmentFloat - idx;
+      const from = HEX_LIST[idx % segmentCount];
+      const to = HEX_LIST[(idx + 1) % segmentCount];
+      const hex = interpolateHex(from, to, t);
+      container.style.setProperty('--cursor-color', hex);
+      requestAnimationFrame(morphColour);
+    }
+    requestAnimationFrame(morphColour);
+    // --------------------------------------------------------
 
-    visible.forEach((p, i) => {
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.setAttribute('role', 'listitem');
-      card.style.animationDelay = (0.04 + i * 0.035) + 's';
+    let mouseX = -100, mouseY = -100;
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      container.style.transform = `translate(${mouseX - 7}px, ${mouseY - 7}px)`;
 
-      card.innerHTML = `
-        <div class="card-preview" aria-label="${p.name} live preview">
-          <div class="shimmer" aria-hidden="true"></div>
-          <span class="live-badge" aria-hidden="true"><span class="live-dot"></span> LIVE</span>
-          <div class="card-overlay" aria-hidden="true">
-            <div class="card-overlay-inner">
-              <span class="card-overlay-label">${p.label}</span>
-              <button class="card-open-btn" aria-label="Open ${p.name} modal">
-                <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 11L11 1M4 1h7v7"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="card-footer" role="button" tabindex="0" aria-label="Open ${p.name} full details">
-          <span class="card-name">${p.name}</span>
-          <span class="card-tag">${p.label}</span>
-        </div>
-      `;
-
-      card.querySelector('.card-footer').addEventListener('click', () => openModal(p));
-      card.querySelector('.card-footer').addEventListener('keydown', e => { 
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(p); } 
-      });
-      
-      card.querySelector('.card-open-btn').addEventListener('click', (e) => { 
-        e.stopPropagation(); 
-        openModal(p); 
-      });
-
-      card.dataset.url = p.url;
-      card.dataset.name = p.name;
-      grid.appendChild(card);
+      const target = e.target;
+      const interactive = target.closest(
+        'a, button, input, select, textarea, [onclick], [role="button"], [tabindex]:not([tabindex="-1"])'
+      );
+      container.classList.toggle('rotating', !!interactive);
     });
 
-    setupLazyIframes();
-  }
-
-  function setupLazyIframes() {
-    const previews = grid.querySelectorAll('.card-preview');
-    // [AUDIT FIX] Expanded rootMargin horizontally for smoother dynamic load during fast scroll 
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const preview = entry.target;
-        if (entry.isIntersecting) {
-          if (!preview.querySelector('iframe')) {
-            const card = preview.closest('.card');
-            const url = card ? card.dataset.url : '';
-            const iframe = document.createElement('iframe');
-            iframe.src = url;
-            iframe.title = card ? card.dataset.name : 'Preview';
-            iframe.setAttribute('loading', 'lazy');
-            // [AUDIT FIX - CRITICAL] Re-applied sandbox to prevent iframe hijack/redirect loops ("number after number" error)
-            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
-            iframe.onload = () => {
-              const shimmer = preview.querySelector('.shimmer');
-              if (shimmer) shimmer.classList.add('loaded');
-            };
-            preview.insertBefore(iframe, preview.firstChild);
-          }
-        } else {
-          // [AUDIT FIX - CRITICAL] Destroy iframes when out of view to prevent iOS Safari RAM crashes ("a problem repeatedly occurred")
-          const iframe = preview.querySelector('iframe');
-          if (iframe) {
-            iframe.remove();
-            const shimmer = preview.querySelector('.shimmer');
-            if (shimmer) shimmer.classList.remove('loaded');
-          }
-        }
-      });
-    }, { rootMargin: '600px 0px' });
-
-    previews.forEach(p => io.observe(p));
-  }
-
-  const overlay = document.getElementById('modalOverlay');
-  const modalIframe = document.getElementById('modalIframe');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalExtLink = document.getElementById('modalExtLink');
-  const modalClose = document.getElementById('modalClose');
-
-  function openModal(p) {
-    modalTitle.textContent = p.name;
-    modalExtLink.href = p.url;
-    modalIframe.src = '';
-    requestAnimationFrame(() => {
-      modalIframe.src = p.url;
+    document.addEventListener('mouseover', (e) => {
+      const interactive = e.target.closest(
+        'a, button, input, select, textarea, [onclick], [role="button"], [tabindex]:not([tabindex="-1"])'
+      );
+      if (interactive) container.classList.add('rotating');
     });
-    overlay.classList.add('open');
-    modalOpen = true;
-    
-    // [AUDIT FIX] Applying scoped class for guaranteed cross-device body scroll lock
-    document.body.classList.add('modal-open');
-    modalClose.focus();
-  }
-
-  function closeModal() {
-    overlay.classList.remove('open');
-    modalOpen = false;
-    document.body.classList.remove('modal-open');
-    setTimeout(() => { modalIframe.src = ''; }, 400);
-  }
-
-  modalClose.addEventListener('click', closeModal);
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalOpen) closeModal(); });
-
-  document.querySelectorAll('.filter-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.filter;
-      buildCards();
+    document.addEventListener('mouseout', (e) => {
+      const interactive = e.target.closest(
+        'a, button, input, select, textarea, [onclick], [role="button"], [tabindex]:not([tabindex="-1"])'
+      );
+      if (!interactive) container.classList.remove('rotating');
     });
-  });
-
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = -100, my = -100, rx = -100, ry = -100;
-  let raf;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px';
-    cursor.style.top = my + 'px';
-    if (!raf) raf = requestAnimationFrame(moveRing);
-  }, { passive: true });
-
-  function moveRing() {
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx + 'px';
-    ring.style.top = ry + 'px';
-    raf = Math.abs(mx - rx) > 0.3 || Math.abs(my - ry) > 0.3
-      ? requestAnimationFrame(moveRing) : null;
-  }
-
-  document.querySelectorAll('button, a, [tabindex], .card-footer, .card-open-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => { cursor.classList.add('active'); ring.classList.add('active'); });
-    el.addEventListener('mouseleave', () => { cursor.classList.remove('active'); ring.classList.remove('active'); });
-  });
-
-  const prog = document.getElementById('scrollProg');
-  document.addEventListener('scroll', () => {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    prog.style.width = (window.scrollY / total * 100) + '%';
-  }, { passive: true });
-
-  const revealIO = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealIO.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
-
-  document.addEventListener('touchstart', e => {
-    const t = e.touches[0];
-    const rip = document.createElement('div');
-    rip.className = 'ripple';
-    rip.style.cssText = `left:${t.clientX}px;top:${t.clientY}px;width:60px;height:60px;margin:-30px 0 0 -30px;`;
-    document.body.appendChild(rip);
-    setTimeout(() => rip.remove(), 700);
-  }, { passive: true });
-
-  document.querySelector('.hero-scroll').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('work').scrollIntoView({ behavior: 'smooth' });
-  });
-
-  buildCards();
-})();
+    document.addEventListener('mouseleave', () => container.style.opacity = '0');
+    document.addEventListener('mouseenter', () => container.style.opacity = '1');
+  })();
 </script>
+
 </body>
 </html>
