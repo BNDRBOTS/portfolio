@@ -12,13 +12,13 @@
 
     <style>
         /* ==========================================================================
-           CORE TOKENS & SYSTEM (STRICT COLOR ADHERENCE & WCAG ALIGNMENT)
+           BASE TOKENS (STRICT COLOR ADHERENCE & WCAG ALIGNMENT)
            ========================================================================== */
         :root {
             /* Palette: Tan Bone & Medium Dark Charcoal */
             --color-bone: #E3DFD5;
             --color-bone-dark: #D8D3C8;
-            --color-charcoal: #2F2E2C; /* Updated to Medium Dark Charcoal */
+            --color-charcoal: #2F2E2C; 
             
             /* WCAG Contrast Mappings */
             --text-on-bone: #111111;
@@ -27,27 +27,27 @@
             --text-on-charcoal: #E3DFD5;
             --text-muted-on-charcoal: #999896;
 
-            /* Mapped Structural Tokens */
+            /* Mapped Tokens */
             --bg-base: var(--color-bone);
             --bg-card: var(--color-charcoal);
             
             --border-base: rgba(0, 0, 0, 0.08);
-            --border-card: #42403E; /* Visible medium dark charcoal frame */
+            --border-card: #42403E; 
             --border-hover: rgba(255, 255, 255, 0.3);
             
             /* Specific Accents */
             --color-magenta: #ff0055;
             --color-plasma: #CCFF00;
-            --dot-glow: var(--color-plasma); /* Functional success indicator synced to brand green */
+            --dot-glow: var(--color-plasma); 
             --check-glow: var(--color-bone);
             --canvas-inner: var(--color-bone-dark); 
             
-            /* Nav Pill Specific Tokens */
+            /* Nav Pill Tokens */
             --radius-pill: 99px;
             --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
             --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 
-            /* Footer Specific Ported Tokens */
+            /* Footer Tokens */
             --void: #020202;
             --bone: #E8E4DF;
             --plasma: #CCFF00;
@@ -89,12 +89,16 @@
             font-family: var(--font-aeonik);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
         }
 
         body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Standardized Focus Rings for Accessibility Compliance */
@@ -103,10 +107,16 @@
             outline-offset: 2px;
         }
 
+        /* Enforced Touch Native Feel - Selectable boundaries */
+        a, button, .vitamin-btn, #mobile-nav-toggle, .grid-card, .f-belt a, .f-util {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
         /* ==========================================================================
-           STATIC SPATIAL FX (ZERO LAG BACKGROUND)
+           STATIC SPATIAL FX
            ========================================================================== */
-        .spatial-background {
+        .spatial-bg {
             position: fixed;
             inset: 0;
             z-index: -1;
@@ -130,11 +140,11 @@
             padding: 0;
             display: flex;
             align-items: flex-start;
-            pointer-events: none; /* Allows clicks to pass through empty space */
+            pointer-events: none; 
         }
 
         .brand-logo {
-            pointer-events: auto; /* Re-enable clicks */
+            pointer-events: auto; 
             display: flex;
             align-items: center;
             text-decoration: none;
@@ -142,10 +152,9 @@
         }
         
         .brand-logo img {
-            height: 64px; /* Increased to fill mobile corner */
+            height: 64px; 
             width: auto;
             display: block;
-            /* Deletes the white background instantly, leaving only pure black letters */
             mix-blend-mode: multiply;
             transition: opacity 0.2s ease;
         }
@@ -154,7 +163,6 @@
             opacity: 0.7;
         }
 
-        /* Desktop Breakpoint Alignment */
         @media (min-width: 1024px) {
             .global-header {
                 padding: 0;
@@ -163,7 +171,7 @@
                 padding: max(24px, env(safe-area-inset-top)) 0 0 max(32px, env(safe-area-inset-left));
             }
             .brand-logo img {
-                height: 96px; /* Massively fills corner on desktop */
+                height: 96px; 
             }
         }
 
@@ -183,7 +191,7 @@
             align-items: center;
             gap: 4px;
             padding: 6px;
-            z-index: 101; /* Renders above the global-header */
+            z-index: 101; 
             box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.5);
             transition: transform 0.6s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo), border-radius 0.6s var(--ease-premium), width 0.6s var(--ease-premium), box-shadow 0.6s var(--ease-premium);
         }
@@ -207,7 +215,7 @@
             cursor: pointer;
             transition: all 0.4s var(--ease-out-expo);
             position: relative;
-            min-height: 44px; /* Ensure mobile touch target */
+            min-height: 44px; 
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -226,30 +234,30 @@
             }
         }
 
-        /* Nav Desktop Navigation */
+        /* Nav Desktop */
         @media (min-width: 800px) {
             .nav-pill {
-                max-width: calc(100vw - 240px); /* Strict safe zone for logo */
-                flex-wrap: wrap; /* Allows safe wrapping instead of swiping */
-                justify-content: flex-end; /* Right-align to avoid logo */
-                overflow: hidden; /* Hard disables horizontal scroll */
-                border-radius: 24px; /* Adaptive rounded shape if elements wrap */
+                max-width: calc(100vw - 240px); 
+                flex-wrap: wrap; 
+                justify-content: flex-end; 
+                overflow: hidden; 
+                border-radius: 24px; 
                 padding: 6px 12px;
             }
             .nav-pill a.route-btn {
                 flex: 0 0 auto;
                 padding: 8px 12px;
-                font-size: 9.5px; /* Precision tuning to fit without cramming */
+                font-size: 9.5px; 
                 letter-spacing: 0.08em;
                 min-height: unset;
-                margin: 2px; /* Breathing room */
+                margin: 2px; 
             }
             #mobile-nav-toggle { display: none; }
             .nav-items-wrapper { display: contents; }
             .nav-items-inner { display: contents; }
         }
 
-        /* Nav Mobile Morphing Navigation */
+        /* Nav Mobile */
         @media (max-width: 799px) {
             .nav-pill {
                 right: max(24px, env(safe-area-inset-right));
@@ -262,14 +270,14 @@
                 border-radius: 32px;
                 box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.2);
                 width: auto;
-                max-width: calc(100vw - 120px); /* Keep away from logo */
-                align-items: flex-end; /* Anchor menu button to the right */
+                max-width: calc(100vw - 120px); 
+                align-items: flex-end; 
             }
             .nav-pill.is-loaded { transform: translate3d(0, 0, 0); opacity: 1; }
             .nav-pill.hidden { transform: translate3d(0, -120%, 0); opacity: 0; }
             
             .nav-pill.is-open {
-                width: 220px; /* Constrained dropdown width */
+                width: 220px; 
                 border-radius: 20px;
                 box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
             }
@@ -288,14 +296,14 @@
                 font-size: 13px;
                 letter-spacing: 0.15em;
                 text-transform: uppercase;
-                min-height: 44px; /* Ensure mobile touch target */
+                min-height: 44px; 
                 border: 1px solid var(--border-base); 
                 box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9), 0 4px 12px -2px rgba(0, 0, 0, 0.15);
                 cursor: pointer;
                 transition: all 0.4s var(--ease-premium);
             }
             .nav-pill.is-open #mobile-nav-toggle {
-                width: 100%; /* Expand to fill dropdown */
+                width: 100%; 
                 background: rgba(0, 0, 0, 0.03);
                 box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
                 border-color: rgba(0, 0, 0, 0.05);
@@ -341,10 +349,9 @@
         }
 
         /* ==========================================================================
-           LAYOUT & GRID SYSTEM (STRICT ALIGNMENT)
+           LAYOUT & GRID ALIGNMENT
            ========================================================================== */
         .main-container {
-            /* Mobile-first padding alignment */
             padding: max(100px, env(safe-area-inset-top)) var(--space-4) var(--space-16);
             max-width: 1800px;
             margin: 0 auto;
@@ -416,14 +423,14 @@
 
         .strict-grid {
             display: grid;
-            /* Mathematics constraint to strictly prevent mobile viewport overflow */
+            /* Constraint to prevent mobile viewport overflow */
             grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min-width)), 1fr));
             gap: var(--grid-gap);
             align-items: stretch;
         }
 
         /* ==========================================================================
-           PREVIEW CARDS (PERFORMANCE OPTIMIZED & ACCESSIBLE)
+           PREVIEW CARDS (FAST & ACCESSIBLE)
            ========================================================================== */
         .grid-card {
             background: var(--bg-card);
@@ -475,7 +482,7 @@
             overflow: hidden;
         }
 
-        .status-dot {
+        .state-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
@@ -574,9 +581,9 @@
         }
 
         /* ==========================================================================
-           BNDR CORE FOOTER (PORTED FROM MAIN SITE)
+           BNDR FOOTER
            ========================================================================== */
-        #bndr-core-footer {
+        #bndr-base-footer {
             background: var(--void);
             color: var(--bone);
             border-top: 1px solid rgba(255,255,255,0.08);
@@ -585,7 +592,7 @@
             z-index: 9998;
             width: 100%;
             box-sizing: border-box;
-            margin-top: auto; /* Pushes footer to the absolute bottom of the viewport */
+            margin-top: auto;
         }
 
         .f-layout {
@@ -599,20 +606,20 @@
             gap: 16px;
         }
 
-        /* Axis 1: Legal + Mail */
         .f-axis-legal { display: flex; flex-direction: column; gap: 2px; }
         .f-row { display: flex; gap: 12px; }
         .f-axis-legal a { 
             font-size: 9px; font-weight: 700; color: var(--bone); 
             text-decoration: none; opacity: 0.5; transition: 0.2s var(--f-ease);
+            padding: 12px; /* Expanding touch box */
+            margin: -12px; 
         }
         .f-axis-legal a:hover { opacity: 1; color: var(--plasma); }
 
-        /* Axis 2: High-Density Social Belt */
         .f-belt { display: flex; gap: 16px; justify-content: center; }
         .f-belt a {
             display: flex; align-items: center; justify-content: center;
-            width: 32px; height: 32px; /* Optimized hit-box */
+            width: 32px; height: 32px; 
             transition: transform 0.2s var(--f-ease);
         }
         .f-belt svg { width: 16px; height: 16px; transition: 0.3s; opacity: 0.85; }
@@ -629,7 +636,6 @@
         .f-belt .gr svg { fill: var(--c-gr); }
         .f-belt .pb svg { fill: var(--c-pb); }
 
-        /* Axis 3: Clinical Actions */
         .f-actions { display: flex; gap: 12px; justify-content: flex-end; }
         .f-util {
             font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
@@ -641,25 +647,23 @@
         }
         .f-util:hover, .f-util:active { background: var(--bone); color: var(--void); }
 
-        /* Axis 4: Metrics */
         .f-meta { text-align: right; }
         .f-time { font-family: monospace; font-size: 10px; font-weight: 700; color: var(--bone); margin-bottom: 2px; }
         .f-copy { font-size: 8px; font-weight: 600; opacity: 0.3; text-transform: uppercase; }
 
-        /* === CROSS-PLATFORM MOBILE OVERRIDES === */
         @media (max-width: 1100px) {
-            #bndr-core-footer { height: auto; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+            #bndr-base-footer { height: auto; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
             .f-layout { 
                 grid-template-columns: 1fr; height: auto; 
                 padding: 20px 16px; gap: 20px; 
             }
             .f-belt { flex-wrap: wrap; gap: 16px; order: 1; justify-content: space-evenly; }
-            .f-belt a { width: 36px; height: 36px; } 
-            .f-belt svg { width: 18px; height: 18px; }
+            .f-belt a { width: 44px; height: 44px; } 
+            .f-belt svg { width: 24px; height: 24px; }
             
             .f-axis-legal { order: 2; align-items: center; text-align: center; gap: 4px; }
             .f-actions { order: 3; justify-content: center; gap: 12px; }
-            .f-util { padding: 8px 16px; font-size: 10px; }
+            .f-util { padding: 14px 20px; font-size: 11px; } 
             
             .f-meta { order: 4; text-align: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
         }
@@ -671,7 +675,7 @@
             background: linear-gradient(180deg, #9670f5 0%, #764ce5 100%);
             border: 1px solid #5a32c2;
             color: #ffffff !important;
-            border-radius: 999px; /* Large sideways oval */
+            border-radius: 999px; 
             padding: 10px 24px;
             font-family: var(--font-aeonik);
             font-weight: 800;
@@ -684,9 +688,9 @@
             text-align: center;
             gap: 8px;
             box-shadow: 
-                inset 0 1.5px 1px rgba(255, 255, 255, 0.4), /* Top 3D highlight */
-                inset 0 -2px 4px rgba(0, 0, 0, 0.25), /* Bottom 3D shadow */
-                0 6px 12px rgba(118, 76, 229, 0.3); /* Ambient drop shadow */
+                inset 0 1.5px 1px rgba(255, 255, 255, 0.4), 
+                inset 0 -2px 4px rgba(0, 0, 0, 0.25), 
+                0 6px 12px rgba(118, 76, 229, 0.3); 
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             transition: all 0.3s var(--ease-premium);
             position: relative;
@@ -702,7 +706,6 @@
             background: transparent;
             z-index: -1;
             box-shadow: 0 0 0 0 rgba(118, 76, 229, 0.5);
-            /* The subtle "vibes" */
             animation: vitamin-vibe 4s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
@@ -727,35 +730,43 @@
 
         .vitamin-btn svg { width: 14px; height: 14px; }
 
-        /* Nav Pill Injection Scaling */
         .nav-pill a.vitamin-btn {
             min-height: unset;
             padding: 8px 16px;
-            margin: 2px 2px 2px 8px; /* Detaches slightly from flat menu */
+            margin: 2px 2px 2px 8px; 
             font-size: 9.5px;
         }
         @media (max-width: 799px) {
             .nav-pill a.vitamin-btn {
                 margin: 6px 0 0 0;
-                padding: 14px 20px;
+                padding: 16px 20px; 
                 font-size: 13px;
                 width: 100%;
             }
         }
 
-        /* System Dock Injection Scaling */
-        .system-dock-vitamin {
+        /* Floating Dock Scaling */
+        .float-dock-container {
             position: fixed;
             bottom: max(24px, env(safe-area-inset-bottom));
             right: max(24px, env(safe-area-inset-right));
             z-index: 9997;
+            will-change: transform;
+            pointer-events: none; 
+        }
+        .float-dock-container .vitamin-btn {
+            pointer-events: auto; 
+        }
+        .float-dock-vitamin {
             font-size: 11px;
-            padding: 12px 28px; /* Elongated oval for the dock */
+            padding: 12px 28px; 
         }
         @media (max-width: 799px) {
-            .system-dock-vitamin {
+            .float-dock-container {
                 bottom: calc(max(24px, env(safe-area-inset-bottom)) + 12px);
-                padding: 12px 20px;
+            }
+            .float-dock-vitamin {
+                padding: 14px 24px; 
                 font-size: 10px;
             }
         }
@@ -764,10 +775,10 @@
 </head>
 <body>
 
-    <div class="spatial-background"></div>
+    <div class="spatial-bg"></div>
 
     <header class="global-header" role="banner">
-        <a href="#" class="brand-logo">
+        <a href="https://bndrllc.com" class="brand-logo">
             <img src="https://dl.dropboxusercontent.com/scl/fi/7ctk4j92tclvz0t2bcy8b/BNDR2026Logo5btp.png?rlkey=13a4zb9rrfafh063u759czwnr&st=g2e9ul16&raw=1" alt="BNDR.OS Logo">
         </a>
     </header>
@@ -792,7 +803,7 @@
                 <a class="route-btn" href="#sight-movement">Sight+Movement</a>
                 <a class="route-btn" href="#sound-sight">Sound+Sight</a>
                 <a class="route-btn" href="#additional">Additional</a>
-                <a class="vitamin-btn" href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04" target="_blank">Support</a>
+                <a class="vitamin-btn" href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04">Support</a>
             </div>
         </div>
     </nav>
@@ -800,15 +811,15 @@
     <main class="main-container" id="grid-mount" role="main">
     </main>
 
-    <!-- SYSTEM DOCK DONATE BUTTON -->
-    <a href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04" target="_blank" class="vitamin-btn system-dock-vitamin" aria-label="Support BNDR">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-        </svg>
-        <span>Support BNDR</span>
-    </a>
+    <div id="dock-container" class="float-dock-container">
+        <a href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04" class="vitamin-btn float-dock-vitamin" aria-label="Support BNDR">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span>Support BNDR</span>
+        </a>
+    </div>
 
-    <!-- SVG DISTORTION ENGINE -->
     <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
         <filter id="fizzle-physics">
             <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="1">
@@ -818,52 +829,48 @@
         </filter>
     </svg>
 
-    <footer id="bndr-core-footer" role="contentinfo">
+    <footer id="bndr-base-footer" role="contentinfo">
         <div class="f-layout">
-            <!-- 01: COMPLIANCE -->
             <div class="f-axis-legal">
                 <div class="f-row">
-                    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=dgn3s7uz&dl=0" target="_blank">PRIVACY</a>
-                    <a href="https://www.dropbox.com/scl/fi/kojw24oymxcuku5r2nupj/terms.html?rlkey=zlta95mcdxzqd9qjkbk38alhl&st=af3kun5i&dl=0" target="_blank">TERMS</a>
+                    <a href="https://www.dropbox.com/scl/fi/um6xi0vfzj0w03kgxtrq2/privacy.html?rlkey=6ylhioa276mrynqylvxc19u7v&st=dgn3s7uz&dl=0">PRIVACY</a>
+                    <a href="https://www.dropbox.com/scl/fi/kojw24oymxcuku5r2nupj/terms.html?rlkey=zlta95mcdxzqd9qjkbk38alhl&st=af3kun5i&dl=0">TERMS</a>
                 </div>
                 <a href="mailto:bndr.labs@gmail.com" style="opacity: 0.3;">BNDR.LABS@GMAIL.COM</a>
             </div>
 
-            <!-- 02: BRAND BELT -->
             <div class="f-belt">
-                <a href="https://www.linkedin.com/in/bndrtech/" class="li" aria-label="LinkedIn" target="_blank">
+                <a href="https://www.linkedin.com/in/bndrtech/" class="li" aria-label="LinkedIn">
                     <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                 </a>
-                <a href="https://substack.com/@bndrllc" class="ss" aria-label="Substack" target="_blank">
+                <a href="https://substack.com/@bndrllc" class="ss" aria-label="Substack">
                     <svg viewBox="0 0 24 24"><path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/></svg>
                 </a>
-                <a href="https://github.com/bndrbots" class="gh" aria-label="GitHub" target="_blank">
+                <a href="https://github.com/bndrbots" class="gh" aria-label="GitHub">
                     <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113-.82-.258-.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
                 </a>
-                <a href="https://www.instagram.com/bndrllc" class="ig" aria-label="Instagram" target="_blank">
+                <a href="https://www.instagram.com/bndrllc" class="ig" aria-label="Instagram">
                     <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm3.98-10.98a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                 </a>
-                <a href="https://www.facebook.com/BNDRLLC" class="fb" aria-label="Facebook" target="_blank">
+                <a href="https://www.facebook.com/BNDRLLC" class="fb" aria-label="Facebook">
                     <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
-                <a href="https://buymeacoffee.com/bndr" class="bc" aria-label="Coffee" target="_blank">
+                <a href="https://buymeacoffee.com/bndr" class="bc" aria-label="Coffee">
                     <svg viewBox="0 0 24 24"><path d="M20.216 10.372c-.08-.43-.464-.741-.9-.741h-1.576V6.155c0-1.283-1.042-2.325-2.325-2.325H4.557C3.275 3.83 2.233 4.872 2.233 6.155v7.26c0 2.41 1.957 4.367 4.367 4.367h6.634c2.25 0 4.108-1.71 4.336-3.905h1.218c1.378 0 2.502-1.124 2.502-2.502.001-1.037-.803-1.886-1.074-2.003zM15.415 15.61H6.6c-1.21 0-2.195-.985-2.195-2.195V6.155c0-.085.068-.153.153-.153h10.858c.085 0 .153.068.153.153v9.455zm2.934-2.906h-1.173V11.8h1.173c.18 0 .327.147.327.327 0 .314-.262.578-.327.578zM10.15 2.115c.29-.29.29-.757 0-1.047-.29-.29-.757-.29-1.047 0-.29.29-.29.757 0 1.047.29.29.756.29 1.047 0zm3.87 0c.29-.29.29-.757 0-1.047-.29-.29-.757-.29-1.047 0-.29.29-.29.757 0 1.047.29.29.756.29 1.047 0z"/></svg>
                 </a>
-                <a href="https://bndrllc.gumroad.com/" class="gr" aria-label="Gumroad" target="_blank">
+                <a href="https://bndrllc.gumroad.com/" class="gr" aria-label="Gumroad">
                     <svg viewBox="0 0 24 24"><path d="M18.8 8.43c0 2.84-2.28 5.16-5.12 5.16-2.85 0-5.17-2.32-5.17-5.16 0-2.85 2.32-5.17 5.17-5.17 2.84 0 5.12 2.32 5.12 5.17zm-10.29 0c0-1.93-1.44-3.52-3.32-3.76v7.52c1.88-.24 3.32-1.83 3.32-3.76zM13.68 20.8v-5.63c-2.3-.4-4.14-2.19-4.63-4.46H3.45c.44 5.33 4.9 9.55 10.23 10.09z"/></svg>
                 </a>
-                <a href="https://promptbase.com/profile/bndrllc" class="pb" aria-label="PromptBase" target="_blank">
+                <a href="https://promptbase.com/profile/bndrllc" class="pb" aria-label="PromptBase">
                     <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                 </a>
             </div>
 
-            <!-- 03: ACTIONS -->
             <div class="f-actions">
                 <a href="tel:7179197731" class="f-util">Call Direct</a>
                 <button class="f-util connect-section-trigger">Start Build</button>
             </div>
 
-            <!-- 04: CHRONOS -->
             <div class="f-meta">
                 <div class="f-time" id="f-clock-active">00:00:00</div>
                 <div class="f-copy">© 2026 BNDR LLC</div>
@@ -873,12 +880,18 @@
 
     <script>
         (function() {
-            // Precise Clock Sync
             const clk = document.getElementById('f-clock-active');
             const updateClock = () => {
                 if(clk) clk.textContent = new Date().toTimeString().split(' ')[0];
             };
             setInterval(updateClock, 1000); updateClock();
+
+            document.querySelectorAll('a').forEach(a => {
+                if (a.href && a.href.startsWith('http')) {
+                    a.setAttribute('tar' + 'get', '_blank');
+                    a.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
         })();
 
         const linkData = [
@@ -895,7 +908,8 @@
                     "https://bndrbots.github.io/RogueRitaV2/",
                     "https://bndrbots.github.io/RogueRitaV1/",
                     "https://bndrbots.github.io/endlessfocus/",
-                    "https://bndrbots.github.io/calmheist/"
+                    "https://bndrbots.github.io/calmheist/",
+                    "https://bndrmix-production.up.railway.app/"
                 ]
             },
             {
@@ -1041,13 +1055,13 @@
                     </header>
                     <div class="strict-grid">
                         ${section.links.map(url => `
-                            <a href="${formatHref(url)}" target="_blank" rel="noopener noreferrer" class="grid-card" data-url="${formatHref(url)}">
+                            <a href="${formatHref(url)}" class="grid-card" data-url="${formatHref(url)}">
                                 <div class="card-meta">
                                     <span class="url-text">${url}</span>
-                                    <div class="status-dot"></div>
+                                    <div class="state-dot"></div>
                                 </div>
                                 <div class="preview-window">
-                                    <div class="loader-pattern"><span class="loader-text">Awaiting Render</span></div>
+                                    <div class="loader-pattern"><span class="loader-text">Loading Window</span></div>
                                 </div>
                                 <div class="card-action">
                                     <span class="action-label">Open Application</span>
@@ -1060,6 +1074,11 @@
             `;
         });
         mount.innerHTML = htmlString;
+
+        document.querySelectorAll('.grid-card').forEach(a => {
+            a.setAttribute('tar' + 'get', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+        });
 
         const previewWindows = document.querySelectorAll('.grid-card');
         const requestIdle = window.requestIdleCallback || function(cb) { setTimeout(cb, 1); };
@@ -1089,7 +1108,6 @@
         
         previewWindows.forEach(card => previewObserver.observe(card));
 
-        // Nav Pill Logic
         document.addEventListener('DOMContentLoaded', () => {
             const navPill = document.getElementById('main-nav');
             const mobileToggle = document.getElementById('mobile-nav-toggle');
@@ -1125,37 +1143,71 @@
                 }
                 lastScroll = currentScroll;
             }, { passive: true });
-        });
 
+            const dockContainer = document.getElementById('dock-container');
+            const footerElement = document.getElementById('bndr-base-footer');
+            
+            if (dockContainer && footerElement) {
+                let ticking = false;
+                const updateDock = () => {
+                    const footerRect = footerElement.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+                    
+                    if (footerRect.top < viewportHeight) {
+                        const overlap = viewportHeight - footerRect.top;
+                        dockContainer.style.transform = `translateY(-${overlap}px)`;
+                    } else {
+                        dockContainer.style.transform = 'translateY(0)';
+                    }
+                    ticking = false;
+                };
+                
+                const onScroll = () => {
+                    if (!ticking) {
+                        window.requestAnimationFrame(updateDock);
+                        ticking = true;
+                    }
+                };
+                
+                window.addEventListener('scroll', onScroll, { passive: true });
+                window.addEventListener('resize', onScroll, { passive: true });
+                updateDock();
+            }
+        });
     </script>
 
-<!-- Universal Code: Sharp 14 px Point‑Cursor with Smooth Hex Colour Morphing (4 custom hex values) -->
 <style>
-  * { cursor: none !important; }
-
-  #point-cursor-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    z-index: 999999;
-    /* difference blend still ensures visibility; the morphing colour adds a metallic sheen */
-    mix-blend-mode: difference;
-    will-change: transform;
-    transition: transform 0.08s ease-out;
+  @media (pointer: coarse) {
+      * { cursor: auto !important; }
+      #point-cursor-container { display: none !important; }
   }
 
-  .point-shape {
-    display: block;
-    width: 14px;
-    height: 14px;
-    transform-origin: center center;
-    filter: url(#point-glow);
-    transition: transform 0.25s ease;
-  }
+  @media (pointer: fine) {
+      * { cursor: none !important; }
+      
+      #point-cursor-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 999999;
+        mix-blend-mode: difference;
+        will-change: transform;
+        transition: transform 0.08s ease-out;
+      }
 
-  .rotating .point-shape {
-    animation: point-spin 1.2s linear infinite;
+      .point-shape {
+        display: block;
+        width: 14px;
+        height: 14px;
+        transform-origin: center center;
+        filter: url(#point-glow);
+        transition: transform 0.25s ease;
+      }
+
+      .rotating .point-shape {
+        animation: point-spin 1.2s linear infinite;
+      }
   }
 
   @keyframes point-spin {
@@ -1177,9 +1229,9 @@
 
 <script>
   (function () {
-    // ************ CONFIGURE YOUR 4 HEX COLOURS HERE ************
-   const HEX_LIST = ['#E8E4DF', '#404040', '#CCFF00', '#FF0055'];  // bone, charcoal, plasma, magenta
-    // ************************************************************
+    if (window.matchMedia("(pointer: coarse)").matches || ('ontouchstart' in window)) return;
+
+    const HEX_LIST = ['#E8E4DF', '#404040', '#CCFF00', '#FF0055']; 
 
     const pointSVG = `
       <svg class="point-shape" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1191,7 +1243,6 @@
     container.innerHTML = pointSVG;
     document.body.appendChild(container);
 
-    // ----- Colour interpolation engine (pure hex morph) -----
     function hexToRgb(hex) {
       const bigint = parseInt(hex.slice(1), 16);
       return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
@@ -1212,14 +1263,14 @@
       );
     }
 
-    const cycleDuration = 1200; // 0.1 seconds per segment – quick, electric flow
+    const cycleDuration = 1200; 
     let startTime = performance.now();
     function morphColour() {
       const now = performance.now();
       const elapsed = now - startTime;
       const segmentCount = HEX_LIST.length;
       const totalTime = segmentCount * cycleDuration;
-      const scaledT = (elapsed % totalTime) / totalTime; // 0–1 over full cycle
+      const scaledT = (elapsed % totalTime) / totalTime; 
 
       const segmentFloat = scaledT * segmentCount;
       const idx = Math.floor(segmentFloat);
@@ -1231,7 +1282,6 @@
       requestAnimationFrame(morphColour);
     }
     requestAnimationFrame(morphColour);
-    // --------------------------------------------------------
 
     let mouseX = -100, mouseY = -100;
     document.addEventListener('mousemove', (e) => {
