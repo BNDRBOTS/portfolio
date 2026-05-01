@@ -119,31 +119,35 @@
            GLOBAL HEADER (SLIM OS BAR)
            ========================================================================== */
         .global-header {
-            position: sticky;
+            position: absolute;
             top: 0;
-            z-index: 100;
-            /* rgba equivalent of #E3DFD5 at 90% opacity */
-            background: rgba(227, 223, 213, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-base);
-            padding: var(--space-2) var(--space-4);
+            left: 0;
+            width: 100%;
+            z-index: 90;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom: none;
+            padding: 0;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            pointer-events: none; /* Allows clicks to pass through empty space */
         }
 
         .brand-logo {
+            pointer-events: auto; /* Re-enable clicks */
             display: flex;
             align-items: center;
             text-decoration: none;
+            padding: max(24px, env(safe-area-inset-top)) 0 0 max(24px, env(safe-area-inset-left));
         }
         
         .brand-logo img {
-            height: 56px; /* Substantially increased from 36px for mobile */
+            height: 64px; /* Increased to fill mobile corner */
             width: auto;
             display: block;
-            /* Filter to charcoal/black to contrast perfectly against the bone header */
-            filter: brightness(0);
+            /* Deletes the white background instantly, leaving only pure black letters */
+            mix-blend-mode: multiply;
             transition: opacity 0.2s ease;
         }
         
@@ -154,10 +158,13 @@
         /* Desktop Breakpoint Alignment */
         @media (min-width: 1024px) {
             .global-header {
-                padding: var(--space-2) var(--space-8);
+                padding: 0;
+            }
+            .brand-logo {
+                padding: max(24px, env(safe-area-inset-top)) 0 0 max(32px, env(safe-area-inset-left));
             }
             .brand-logo img {
-                height: 80px; /* Proportional scale-up on desktop */
+                height: 96px; /* Massively fills corner on desktop */
             }
         }
 
@@ -223,22 +230,20 @@
         /* Nav Desktop Navigation */
         @media (min-width: 800px) {
             .nav-pill {
-                max-width: calc(100vw - 48px);
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                overscroll-behavior-x: contain;
-                white-space: nowrap;
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-                scroll-snap-type: x mandatory;
-                scroll-padding: 0 6px;
-                padding: 4px;
+                max-width: calc(100vw - 240px); /* Strict safe zone for logo */
+                flex-wrap: wrap; /* Allows safe wrapping instead of swiping */
+                justify-content: flex-end; /* Right-align to avoid logo */
+                overflow: hidden; /* Hard disables horizontal scroll */
+                border-radius: 24px; /* Adaptive rounded shape if elements wrap */
+                padding: 6px 12px;
             }
             .nav-pill a.route-btn {
                 flex: 0 0 auto;
-                scroll-snap-align: start;
-                padding: 8px 20px;
+                padding: 8px 12px;
+                font-size: 9.5px; /* Precision tuning to fit without cramming */
+                letter-spacing: 0.08em;
                 min-height: unset;
+                margin: 2px; /* Breathing room */
             }
             #mobile-nav-toggle { display: none; }
             .nav-items-wrapper { display: contents; }
@@ -248,23 +253,24 @@
         /* Nav Mobile Morphing Navigation */
         @media (max-width: 799px) {
             .nav-pill {
-                right: auto;
-                left: 50%;
-                transform: translate3d(-50%, -20px, 0);
+                right: max(24px, env(safe-area-inset-right));
+                left: auto;
+                transform: translate3d(0, -20px, 0);
                 flex-direction: column;
                 background: var(--color-bone);
-                min-width: 140px;
+                min-width: auto;
                 padding: 4px;
                 border-radius: 32px;
                 box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.2);
                 width: auto;
-                max-width: calc(100vw - 48px);
+                max-width: calc(100vw - 120px); /* Keep away from logo */
+                align-items: flex-end; /* Anchor menu button to the right */
             }
-            .nav-pill.is-loaded { transform: translate3d(-50%, 0, 0); opacity: 1; }
-            .nav-pill.hidden { transform: translate3d(-50%, -120%, 0); opacity: 0; }
+            .nav-pill.is-loaded { transform: translate3d(0, 0, 0); opacity: 1; }
+            .nav-pill.hidden { transform: translate3d(0, -120%, 0); opacity: 0; }
             
             .nav-pill.is-open {
-                width: calc(100vw - 48px);
+                width: 220px; /* Constrained dropdown width */
                 border-radius: 20px;
                 box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
             }
@@ -273,7 +279,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                width: 100%;
+                width: auto;
                 background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%), var(--color-bone);
                 color: var(--text-on-bone);
                 padding: 8px 24px;
@@ -290,6 +296,7 @@
                 transition: all 0.4s var(--ease-premium);
             }
             .nav-pill.is-open #mobile-nav-toggle {
+                width: 100%; /* Expand to fill dropdown */
                 background: rgba(0, 0, 0, 0.03);
                 box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
                 border-color: rgba(0, 0, 0, 0.05);
@@ -339,7 +346,7 @@
            ========================================================================== */
         .main-container {
             /* Mobile-first padding alignment */
-            padding: var(--space-4) var(--space-4) var(--space-16);
+            padding: max(100px, env(safe-area-inset-top)) var(--space-4) var(--space-16);
             max-width: 1800px;
             margin: 0 auto;
             width: 100%;
@@ -347,7 +354,7 @@
 
         @media (min-width: 1024px) {
             .main-container {
-                padding: var(--space-8) var(--space-8) var(--space-16);
+                padding: 140px var(--space-8) var(--space-16);
             }
         }
 
@@ -666,7 +673,7 @@
 
     <header class="global-header" role="banner">
         <a href="#" class="brand-logo">
-            <img src="https://dl.dropboxusercontent.com/scl/fi/9z9t4iy7758k9tsa9k4ia/BNDR2026Logo5btp.png?rlkey=1baik8nzrx8n7rhj53q0nq449&st=owom8o9n&raw=1" alt="BNDR.OS Logo">
+            <img src="https://dl.dropboxusercontent.com/scl/fi/7ctk4j92tclvz0t2bcy8b/BNDR2026Logo5btp.png?rlkey=13a4zb9rrfafh063u759czwnr&st=g2e9ul16&raw=1" alt="BNDR.OS Logo">
         </a>
     </header>
 
