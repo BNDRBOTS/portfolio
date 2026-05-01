@@ -89,7 +89,6 @@
             font-family: var(--font-aeonik);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            scroll-behavior: smooth;
         }
 
         body {
@@ -665,6 +664,102 @@
             .f-meta { order: 4; text-align: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); }
         }
 
+        /* ==========================================================================
+           DONATE / SUPPORT BUTTONS (3D OVAL VITAMIN)
+           ========================================================================== */
+        .vitamin-btn {
+            background: linear-gradient(180deg, #9670f5 0%, #764ce5 100%);
+            border: 1px solid #5a32c2;
+            color: #ffffff !important;
+            border-radius: 999px; /* Large sideways oval */
+            padding: 10px 24px;
+            font-family: var(--font-aeonik);
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+            box-shadow: 
+                inset 0 1.5px 1px rgba(255, 255, 255, 0.4), /* Top 3D highlight */
+                inset 0 -2px 4px rgba(0, 0, 0, 0.25), /* Bottom 3D shadow */
+                0 6px 12px rgba(118, 76, 229, 0.3); /* Ambient drop shadow */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s var(--ease-premium);
+            position: relative;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .vitamin-btn::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 999px;
+            background: transparent;
+            z-index: -1;
+            box-shadow: 0 0 0 0 rgba(118, 76, 229, 0.5);
+            /* The subtle "vibes" */
+            animation: vitamin-vibe 4s infinite cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        @keyframes vitamin-vibe {
+            0% { box-shadow: 0 0 0 0 rgba(118, 76, 229, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(118, 76, 229, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(118, 76, 229, 0); }
+        }
+
+        .vitamin-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg, #a382f7 0%, #855deb 100%);
+            box-shadow: 
+                inset 0 1.5px 1px rgba(255, 255, 255, 0.5), 
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+                0 10px 20px rgba(118, 76, 229, 0.4);
+        }
+        .vitamin-btn:hover::before {
+            animation: none;
+            box-shadow: 0 0 20px 4px rgba(118, 76, 229, 0.4);
+        }
+
+        .vitamin-btn svg { width: 14px; height: 14px; }
+
+        /* Nav Pill Injection Scaling */
+        .nav-pill a.vitamin-btn {
+            min-height: unset;
+            padding: 8px 16px;
+            margin: 2px 2px 2px 8px; /* Detaches slightly from flat menu */
+            font-size: 9.5px;
+        }
+        @media (max-width: 799px) {
+            .nav-pill a.vitamin-btn {
+                margin: 6px 0 0 0;
+                padding: 14px 20px;
+                font-size: 13px;
+                width: 100%;
+            }
+        }
+
+        /* System Dock Injection Scaling */
+        .system-dock-vitamin {
+            position: fixed;
+            bottom: max(24px, env(safe-area-inset-bottom));
+            right: max(24px, env(safe-area-inset-right));
+            z-index: 9997;
+            font-size: 11px;
+            padding: 12px 28px; /* Elongated oval for the dock */
+        }
+        @media (max-width: 799px) {
+            .system-dock-vitamin {
+                bottom: calc(max(24px, env(safe-area-inset-bottom)) + 12px);
+                padding: 12px 20px;
+                font-size: 10px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -697,12 +792,21 @@
                 <a class="route-btn" href="#sight-movement">Sight+Movement</a>
                 <a class="route-btn" href="#sound-sight">Sound+Sight</a>
                 <a class="route-btn" href="#additional">Additional</a>
+                <a class="vitamin-btn" href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04" target="_blank">Support</a>
             </div>
         </div>
     </nav>
 
     <main class="main-container" id="grid-mount" role="main">
     </main>
+
+    <!-- SYSTEM DOCK DONATE BUTTON -->
+    <a href="https://donate.stripe.com/28E28r1JN7cm5VW0Ag0oM04" target="_blank" class="vitamin-btn system-dock-vitamin" aria-label="Support BNDR">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span>Support BNDR</span>
+    </a>
 
     <!-- SVG DISTORTION ENGINE -->
     <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true">
